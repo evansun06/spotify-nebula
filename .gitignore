@@ -1,2 +1,49 @@
+# Virtual environment
 .venv/
+
+# Environment variables
 .env
+
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+*.log
+*.out
+*.err
+
+# IDE-specific files
+.vscode/
+.idea/
+*.swp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Test coverage reports
+htmlcov/
+.coverage
+*.cover
+*.py,cover
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# PyInstaller
+*.spec
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Temporary files
+*.tmp
+*.bak
+*.old
+*.orig
+*.rej
