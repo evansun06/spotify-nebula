@@ -1,49 +1,73 @@
-# Virtual environment
-.venv/
-
-# Environment variables
-.env
-
-# Byte-compiled files
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Logs
-*.log
-*.out
-*.err
+# C extensions
+*.so
 
-# IDE-specific files
-.vscode/
-.idea/
-*.swp
-
-# OS-specific files
-.DS_Store
-Thumbs.db
-
-# Test coverage reports
-htmlcov/
-.coverage
-*.cover
-*.py,cover
-
-# Build artifacts
+# Distribution / packaging
+.Python
 build/
+develop-eggs/
 dist/
-*.egg-info/
+downloads/
+eggs/
 .eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+myenv/
+.venv/
+env/
+venv/
+ENV/
 
 # PyInstaller
+*.manifest
 *.spec
 
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints/
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
 
-# Temporary files
-*.tmp
-*.bak
-*.old
-*.orig
-*.rej
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Others
+*.env
+.env
