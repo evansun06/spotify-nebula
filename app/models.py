@@ -6,7 +6,7 @@ class Track_Data(BaseModel):
     artist: List[str]
     audio_features: Audio_Features
 
-c
+
 class Audio_Features(BaseModel):
     acousticness: float
     danceability: float
@@ -16,4 +16,5 @@ class Audio_Features(BaseModel):
     tempo: float
 
     
+
 
