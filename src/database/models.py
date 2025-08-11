@@ -23,7 +23,12 @@ class SpotifyToken(Base):
     access_token = Column(Text, nullable=False)
     refresh_token = Column(Text, nullable=False)
     expires_at = Column(TIMESTAMP(timezone=True), nullable=False)
-    updated_at = Column(TIMESTAMP(timezone=True), server_default=func.current_timestamp())
+    updated_at = Column(
+        TIMESTAMP(timezone=True),
+        server_default=func.current_timestamp(),
+        onupdate=func.current_timestamp()
+    )
+    
 
     # relationship back to user
-    user = relationship("SpotifyUser", back_populates="tokens")
+    user = relationship("NebulaUser", back_populates="tokens")
