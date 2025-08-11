@@ -1,12 +1,13 @@
 import base64
 import secrets
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 import os
 import httpx
 from fastapi.responses import RedirectResponse
 from urllib.parse import urlencode
 from dotenv import load_dotenv
 import requests
+from src.database import crud, create_db
 
 load_dotenv()
 
@@ -71,4 +72,11 @@ async def callback(code: str):
     spotify_user_id = user_info.get('id')
     display_name = user_info.get('display_name')
     
-    return user_info
+    db_session = next(create_db.get_db())
+    
+    try:
+        crud.create_nebula_user(db_session, spotify_user_id, display_name)
+    except HTTPException:
+        return {"message": "user already exists"}
+
+    return {"message": "user successfully created"}
