@@ -6,6 +6,7 @@ import httpx
 from fastapi.responses import RedirectResponse
 from urllib.parse import urlencode
 from dotenv import load_dotenv
+import requests
 
 load_dotenv()
 
@@ -15,6 +16,12 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 REDIRECT_URI = os.getenv("REDIRECT_URI")
 
 router = APIRouter(tags={'auth'})
+
+def get_user_info(access_token: str):
+    url = "https://api.spotify.com/v1/me"
+    header = {"Authorization": f'Bearer {access_token}'}
+    response = requests.get(url, headers=header)
+    return response.json()
 
 @router.get("/login")
 async def login():
@@ -48,6 +55,20 @@ async def callback(code: str):
     }
     
     async with httpx.AsyncClient() as client:
-        response = await client.post("https://accounts.spotify.com/api/token", data=body_parameters, headers=header_parameters)
-
-    return response.json()
+        token_data_response = await client.post("https://accounts.spotify.com/api/token", data=body_parameters, headers=header_parameters)
+    
+    token_data = token_data_response.json()
+    
+    access_token = token_data.get('access_token')
+    refresh_token = token_data.get('refresh_token')
+    
+    user_url = "https://api.spotify.com/v1/me"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    async with httpx.AsyncClient() as client:
+        user_info_response = await client.get(user_url, headers=headers)
+    
+    user_info = user_info_response.json()
+    spotify_user_id = user_info.get('id')
+    display_name = user_info.get('display_name')
+    
+    return user_info
