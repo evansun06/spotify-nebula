@@ -72,10 +72,8 @@ async def callback(code: str):
     spotify_user_id = user_info.get('id')
     display_name = user_info.get('display_name')
     
-    db_session = next(create_db.get_db())
-    
     try:
-        crud.create_nebula_user(db_session, spotify_user_id, display_name)
+        crud.create_nebula_user(next(create_db.get_db()),spotify_user_id, display_name)
     except HTTPException:
         return {"message": "user already exists"}
 
