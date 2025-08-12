@@ -29,6 +29,7 @@ B64_HEADER = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
 TOKEN_REQUEST_HEADERS = {'Authorization': f'Basic {B64_HEADER}',
                         'Content-Type': 'application/x-www-form-urlencoded'}
 
+oauth2_scheme = HTTPBearer()
 router = APIRouter(tags={'auth'})
 security = HTTPBearer()
 
