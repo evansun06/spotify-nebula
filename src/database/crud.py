@@ -74,11 +74,18 @@ def update_tokens(db_session: Session, nebula_user_id: int, access_token:str, re
 
 ## Checks if a user has an expired token.
 def has_expired_token(db_session:Session,  nebula_user_id: int) -> bool:
+    # existing_record = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == nebula_user_id).first()
+    # if existing_record:
+    #     return existing_record.expires_at > datetime.now(timezone.utc)
+    # else:
+    #     return True
     existing_record = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == nebula_user_id).first()
     if existing_record:
-        return existing_record.expires_at > datetime.now(timezone.utc)
-    else:
-        return True
+        expires_at = existing_record.expires_at
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+        return expires_at > datetime.now(timezone.utc)
+    return True
 
 
     
