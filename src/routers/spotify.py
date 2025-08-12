@@ -122,6 +122,7 @@ async def callback(code: str):
     
     token = create_access_token(user.id, user.spotify_user_id, user.display_name, timedelta(minutes=20))
 
+
     return {'access_token': token, 'token_type': 'bearer'}
 
 @router.get("/top_100")
