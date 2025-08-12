@@ -13,7 +13,7 @@ class TokenNotFoundError(Exception):
     pass
 
 ## Retrieve an API Access Token using a Nebula User ID
-def getAccToken(db_session: Session, neb_user_id: int):
+def get_token(db_session: Session, neb_user_id: int):
     token = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == neb_user_id).first()
     if token is None:
         raise TokenNotFoundError(f"No access token found for user_id {neb_user_id}")
@@ -24,7 +24,7 @@ def getAccToken(db_session: Session, neb_user_id: int):
 def create_nebula_user(db_session: Session, spotify_user_id: str, display_name: str):
     existing_user = db_session.query(NebulaUser).filter(NebulaUser.spotify_user_id == spotify_user_id).first()
     if existing_user: 
-        raise HTTPException(status_code=409, detail="User already exists")
+        return existing_user
     
     new_user = NebulaUser(spotify_user_id = spotify_user_id, display_name = display_name)
     try: 
@@ -44,7 +44,7 @@ def create_nebula_user(db_session: Session, spotify_user_id: str, display_name: 
 
 
 ## Update Tokens For a Given User
-def update_tokens(db_session: Session, nebula_user_id: int, access_token:str, refresh_token:str,):
+def update_tokens(db_session: Session, nebula_user_id: int, access_token:str, refresh_token:str):
     existing_record = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == nebula_user_id).first()
     if existing_record:
         record = db_session.query(SpotifyToken).filter_by(user_id=nebula_user_id).first()
