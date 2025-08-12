@@ -24,7 +24,7 @@ def getAccToken(db_session: Session, neb_user_id: int):
 def create_nebula_user(db_session: Session, spotify_user_id: str, display_name: str):
     existing_user = db_session.query(NebulaUser).filter(NebulaUser.spotify_user_id == spotify_user_id).first()
     if existing_user: 
-        raise HTTPException(status_code=409, detail="User already exists")
+        return existing_user
     
     new_user = NebulaUser(spotify_user_id = spotify_user_id, display_name = display_name)
     try: 
