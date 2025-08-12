@@ -72,7 +72,9 @@ def get_esp(matrix_scaled:np.ndarray) -> float:
         direction="increasing"
     )
 
-    return k_distances[knee.knee]
+    eps =  k_distances[knee.knee]
+    print(eps)
+    return eps
 
 
 
