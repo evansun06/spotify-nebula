@@ -13,7 +13,7 @@ class TokenNotFoundError(Exception):
     pass
 
 ## Retrieve an API Access Token using a Nebula User ID
-def getAccToken(db_session: Session, neb_user_id: int):
+def get_token(db_session: Session, neb_user_id: int):
     token = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == neb_user_id).first()
     if token is None:
         raise TokenNotFoundError(f"No access token found for user_id {neb_user_id}")
@@ -44,7 +44,7 @@ def create_nebula_user(db_session: Session, spotify_user_id: str, display_name: 
 
 
 ## Update Tokens For a Given User
-def update_tokens(db_session: Session, nebula_user_id: int, access_token:str, refresh_token:str,):
+def update_tokens(db_session: Session, nebula_user_id: int, access_token:str, refresh_token:str):
     existing_record = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == nebula_user_id).first()
     if existing_record:
         record = db_session.query(SpotifyToken).filter_by(user_id=nebula_user_id).first()
@@ -74,11 +74,18 @@ def update_tokens(db_session: Session, nebula_user_id: int, access_token:str, re
 
 ## Checks if a user has an expired token.
 def has_expired_token(db_session:Session,  nebula_user_id: int) -> bool:
+    # existing_record = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == nebula_user_id).first()
+    # if existing_record:
+    #     return existing_record.expires_at > datetime.now(timezone.utc)
+    # else:
+    #     return True
     existing_record = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == nebula_user_id).first()
     if existing_record:
-        return existing_record.expires_at > datetime.now(timezone.utc)
-    else:
-        return True
+        expires_at = existing_record.expires_at
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+        return expires_at > datetime.now(timezone.utc)
+    return True
 
 
     
