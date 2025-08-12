@@ -17,16 +17,10 @@ class Track(BaseModel):
     artist: list
     audio_features: Audio_Features
 
-class Clustered_Track(BaseModel):
-    name: str
-    cluster: int
-    artist: list
-    audio_features:Audio_Features
-
 class Projected_Track(BaseModel):
     name: str
     cluster: int
     artist: list
-    x: int
-    y: int
-    z: int
+    x: float
+    y: float
+    z: float

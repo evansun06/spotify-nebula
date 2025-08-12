@@ -3,10 +3,15 @@ from kneed import KneeLocator
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import DBSCAN
 from sklearn.neighbors import NearestNeighbors
-
+from sklearn.manifold import TSNE
 from . import models 
 
-def dbscan(tracklist:list[models.Track]) -> list[models.Clustered_Track]:
+SEED = 2025
+
+
+### Main Pipline
+### Workflow: Standardize -> Perform KNN / Tune Epsilon -> Apply DBSCAN Clustering -> Project Via TSNE -> Wrap
+def pipline(tracklist:list[models.Track]) -> list[models.Projected_Track]:
     #1 Build Audio Feature Matrix
     feature_matrix = np.array([
         [
@@ -26,22 +31,28 @@ def dbscan(tracklist:list[models.Track]) -> list[models.Clustered_Track]:
     scaler = StandardScaler()
     matrix_scaled = scaler.fit_transform(feature_matrix)
 
-     #3 Apply DBSCAN
+    #3 Apply DBSCAN
     dbscan = DBSCAN(eps=get_esp(matrix_scaled), min_samples=16)
     labels = dbscan.fit_predict(matrix_scaled)
 
-    #4Wrap results
-    clustered_tracks = [
-        models.Clustered_Track(
+    #4 Project Via TSNE
+    tsne = TSNE(n_components=3, perplexity=30, random_state=SEED)
+    projection = tsne.fit_transform(matrix_scaled)
+
+    #5 Wrap results
+    projected_tracks = [
+        models.Projected_Track(
             name=track.name,
+            cluster=label,
             artist=track.artist,
-            audio_features=track.audio_features,
-            cluster=label
+            x=coord[0],
+            y=coord[1],
+            z=coord[2]
         )
-        for track, label in zip(tracklist, labels)
+        for track, label, coord in zip(tracklist, labels, projection)
     ]
 
-    return clustered_tracks
+    return projected_tracks
 
 
 ### Helper function to aquire best epsilon parameter using knee recognizer.
@@ -60,6 +71,16 @@ def get_esp(matrix_scaled:np.ndarray) -> float:
         curve="convex",
         direction="increasing"
     )
+
     return k_distances[knee.knee]
+
+
+
+
+
+
+
+    
+
 
 
