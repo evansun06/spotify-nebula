@@ -75,8 +75,13 @@ async def callback(code: str):
     db_session = next(create_db.get_db())
     
     try:
-        crud.create_nebula_user(db_session, spotify_user_id, display_name)
+        user = crud.create_nebula_user(db_session, spotify_user_id, display_name)
     except HTTPException:
-        return {"message": "user already exists"}
+        return {"message": "user already exists"} 
+    
+    try: 
+        crud.update_tokens(user.id, access_token, refresh_token)
+    except HTTPException:
+        return {"message": "token error"} 
 
     return {"message": "user successfully created"}
