@@ -80,7 +80,7 @@ async def callback(code: str):
         return {"message": "user already exists"} 
     
     try: 
-        crud.update_tokens(user.id, access_token, refresh_token)
+        crud.update_tokens(db_session, user.id, access_token, refresh_token)
     except HTTPException:
         return {"message": "token error"} 
 
