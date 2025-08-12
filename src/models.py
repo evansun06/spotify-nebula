@@ -6,11 +6,21 @@ class Audio_Features(BaseModel):
     energy: float
     instrumentalness: float
     loudness: float
+    valence:float
     tempo: float
+    speechiness:float
+    
 
-class Track_Data(BaseModel):
+
+class Track(BaseModel):
     name: str
     artist: list
     audio_features: Audio_Features
 
-
+class Projected_Track(BaseModel):
+    name: str
+    cluster: int
+    artist: list
+    x: float
+    y: float
+    z: float
