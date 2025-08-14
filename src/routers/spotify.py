@@ -17,6 +17,10 @@ from jose import JWTError, jwt
 from starlette import status
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from src import models
+import time
+import requests
+
 
 load_dotenv()
 
@@ -34,6 +38,7 @@ RAPID_API_KEY = os.getenv('RAPID_API_KEY')
 
 router = APIRouter(tags={'auth'})
 security = HTTPBearer()
+
 
 class Token(BaseModel):
     access_token: str
@@ -154,37 +159,38 @@ async def callback(code: str):
 
     return {'access_token': token, 'token_type': 'bearer'}
 
-class Audio_Features():
-    acousticness: float
-    danceability: float
-    energy: float
-    instrumentalness: float
-    loudness: str
-    tempo: float
-    speechiness:float
+# class Audio_Features():
+#     acousticness: float
+#     danceability: float
+#     energy: float
+#     instrumentalness: float
+#     loudness: str
+#     tempo: float
+#     speechiness:float
     
-    def __init__(self, acousticness: float, danceability: float, 
-                 energy: float, instrumentalness: float, loudness: str, 
-                 tempo: float, speechiness: float):
+#     def __init__(self, acousticness: float, danceability: float, 
+#                  energy: float, instrumentalness: float, loudness: str, 
+#                  tempo: float, speechiness: float):
         
-        self.acousticness = acousticness
-        self.danceability = danceability
-        self.energy = energy
-        self.instrumentalness = instrumentalness
-        self.loudness = loudness
-        self.tempo = tempo
-        self.speechiness = speechiness
+#         self.acousticness = acousticness
+#         self.danceability = danceability
+#         self.energy = energy
+#         self.instrumentalness = instrumentalness
+#         self.loudness = loudness
+#         self.tempo = tempo
+#         self.speechiness = speechiness
     
-class Track():
-    name: str
-    artists: list
-    audio_features: Audio_Features
+# class Track():
+#     name: str
+#     artists: list
+#     audio_features: Audio_Features
     
-    def __init__(self, name: str, artists: str, audio_features: Audio_Features):
-        self.name = name
-        self.artists = artists
-        self.audio_features = audio_features
+#     def __init__(self, name: str, artists: str, audio_features: Audio_Features):
+#         self.name = name
+#         self.artists = artists
+#         self.audio_features = audio_features
     
+
 
 @router.get("/nebula")
 async def get_nebula(user: user_dependency):
@@ -235,11 +241,18 @@ async def get_nebula(user: user_dependency):
         
         rapid_api_url = f"https://track-analysis.p.rapidapi.com/pktx/spotify/{track_id}"
         
-        response = requests.get(rapid_api_url, headers=header_parameters)
-        if response.status_code != 200:
-            print(f"Error fetching {track_id}: {response.status_code} - {response.text}")
-    
-        raw_audio_features = response.json()
+        try:
+            resp = requests.get(rapid_api_url, headers=header_parameters, timeout=5)
+            resp.raise_for_status()  # raises if 4xx/5xx
+            raw_audio_features = resp.json()
+
+        except requests.exceptions.RequestException as e:
+        # This catches network errors, timeouts, HTTP errors
+            raise HTTPException(status_code=502, detail=f"RapidAPI request failed: {e}")
+        
+        except ValueError:
+        # .json() failed
+            raise HTTPException(status_code=502, detail="Invalid JSON returned from RapidAPI")
         
         track_acousticness = raw_audio_features.get('acousticness')
         track_danceability = raw_audio_features.get('danceability')
@@ -249,15 +262,16 @@ async def get_nebula(user: user_dependency):
         track_tempo = raw_audio_features.get('tempo')
         track_speechiness = raw_audio_features.get('speechiness')
         
-        track_audio_feaatures = Audio_Features(track_acousticness,
-                                               track_danceability,
-                                               track_energy,
-                                               track_instrumentalness,
-                                               track_loudness,
-                                               track_tempo,
-                                               track_speechiness)
+        track_audio_features = models.Audio_Features(acousticness=track_acousticness,
+                                               danceability=track_danceability,
+                                               energy=track_energy,
+                                               instrumentalness=track_instrumentalness,
+                                               loudness=track_loudness,
+                                               tempo=track_tempo,
+                                               speechiness=track_speechiness)
         
-        track = Track(track_name, track_artists, track_audio_feaatures)
+        track = models.Track(name=track_name, artist=track_artists, audio_features=track_audio_features)
         tracks.append(track)
+        time.sleep(0.05)
     
     return tracks

@@ -5,8 +5,7 @@ class Audio_Features(BaseModel):
     danceability: float
     energy: float
     instrumentalness: float
-    loudness: float
-    valence:float
+    loudness: str
     tempo: float
     speechiness:float
     

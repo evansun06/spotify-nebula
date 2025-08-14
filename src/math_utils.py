@@ -20,7 +20,6 @@ def pipline(tracklist:list[models.Track]) -> list[models.Projected_Track]:
             track.audio_features.energy,
             track.audio_features.instrumentalness,
             track.audio_features.loudness,
-            track.audio_features.valence,
             track.audio_features.tempo,
             track.audio_features.speechiness
         ]
@@ -57,7 +56,7 @@ def pipline(tracklist:list[models.Track]) -> list[models.Projected_Track]:
 
 ### Helper function to aquire best epsilon parameter using knee recognizer.
 def get_esp(matrix_scaled:np.ndarray) -> float:
-    k = 9
+    k = 8
     ### Set KNN Model
     neighbors = NearestNeighbors(n_neighbors=k)
     neighbors_fit = neighbors.fit(matrix_scaled)
