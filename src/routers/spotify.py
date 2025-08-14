@@ -20,6 +20,7 @@ from spotipy.oauth2 import SpotifyOAuth
 from src import models
 import time
 import requests
+from src import math_utils, plot_utils
 
 
 load_dotenv()
@@ -258,9 +259,12 @@ async def get_nebula(user: user_dependency):
         track_danceability = raw_audio_features.get('danceability')
         track_energy = raw_audio_features.get('energy')
         track_instrumentalness = raw_audio_features.get('instrumentalness')
-        track_loudness = raw_audio_features.get('loudness')
+        track_loudness_str = raw_audio_features.get('loudness')
+        track_loudness = int(track_loudness_str.replace(" dB", ""))
         track_tempo = raw_audio_features.get('tempo')
         track_speechiness = raw_audio_features.get('speechiness')
+
+    
         
         track_audio_features = models.Audio_Features(acousticness=track_acousticness,
                                                danceability=track_danceability,
@@ -273,5 +277,10 @@ async def get_nebula(user: user_dependency):
         track = models.Track(name=track_name, artist=track_artists, audio_features=track_audio_features)
         tracks.append(track)
         time.sleep(0.05)
+
+    processed_tracks = math_utils.pipline(tracks)
+
+    plot_utils.visualize_projected_tracks(processed_tracks)
     
-    return tracks
+    
+    return processed_tracks

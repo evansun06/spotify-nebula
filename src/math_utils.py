@@ -31,7 +31,7 @@ def pipline(tracklist:list[models.Track]) -> list[models.Projected_Track]:
     matrix_scaled = scaler.fit_transform(feature_matrix)
 
     #3 Apply DBSCAN
-    dbscan = DBSCAN(eps=get_esp(matrix_scaled), min_samples=16)
+    dbscan = DBSCAN(eps=get_esp(matrix_scaled), min_samples=12)
     labels = dbscan.fit_predict(matrix_scaled)
 
     #4 Project Via TSNE
@@ -57,13 +57,13 @@ def pipline(tracklist:list[models.Track]) -> list[models.Projected_Track]:
 ### Helper function to aquire best epsilon parameter using knee recognizer.
 def get_esp(matrix_scaled:np.ndarray) -> float:
     k = 8
-    ### Set KNN Model
     neighbors = NearestNeighbors(n_neighbors=k)
     neighbors_fit = neighbors.fit(matrix_scaled)
     distances, _ = neighbors_fit.kneighbors(matrix_scaled)
-
-    ### Aquire the distances for each point between itself and its k neighbor
     k_distances = distances[:, k-1]
+    k_distances = np.sort(k_distances)
+
+
     knee = KneeLocator(
         x=range(len(k_distances)),
         y=k_distances,
@@ -71,9 +71,13 @@ def get_esp(matrix_scaled:np.ndarray) -> float:
         direction="increasing"
     )
 
-    eps =  k_distances[knee.knee]
-    print(eps)
+    if knee.knee is None:
+        print("No knee found, using default eps=0.5")
+        return 0.5  # fallback
+    eps = k_distances[knee.knee]
+    print(f"Chosen eps: {eps}")
     return eps
+
 
 
 
