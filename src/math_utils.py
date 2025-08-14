@@ -1,8 +1,10 @@
 import numpy as np
+import umap
 from kneed import KneeLocator
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import DBSCAN
 from sklearn.neighbors import NearestNeighbors
+from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from . import models 
 
@@ -30,13 +32,17 @@ def pipline(tracklist:list[models.Track]) -> list[models.Projected_Track]:
     scaler = StandardScaler()
     matrix_scaled = scaler.fit_transform(feature_matrix)
 
+    
+
     #3 Apply DBSCAN
-    dbscan = DBSCAN(eps=get_esp(matrix_scaled), min_samples=12)
+    dbscan = DBSCAN(eps=3, min_samples=40)
     labels = dbscan.fit_predict(matrix_scaled)
 
-    #4 Project Via TSNE
+    #4 Project
     tsne = TSNE(n_components=3, perplexity=30, random_state=SEED)
     projection = tsne.fit_transform(matrix_scaled)
+
+    
 
     #5 Wrap results
     projected_tracks = [

@@ -205,7 +205,7 @@ async def get_nebula(user: user_dependency):
     access_token = token_model.access_token
     
     body_parameters = {
-        'time_range': 'long_term',
+        'time_range': 'short_term',
         'limit': 50,
         'offset': 0
     }
@@ -232,6 +232,7 @@ async def get_nebula(user: user_dependency):
         track_name = item.get('name')
         track_artists = []
         track_id = item.get('id')
+        print(f"Requesting audio features for track ID: {track_id}")
         
         for artist in item.get('artists'):
             artist_name = artist.get('name')
@@ -244,16 +245,15 @@ async def get_nebula(user: user_dependency):
         
         try:
             resp = requests.get(rapid_api_url, headers=header_parameters, timeout=5)
-            resp.raise_for_status()  # raises if 4xx/5xx
+            resp.raise_for_status()
             raw_audio_features = resp.json()
 
         except requests.exceptions.RequestException as e:
-        # This catches network errors, timeouts, HTTP errors
-            raise HTTPException(status_code=502, detail=f"RapidAPI request failed: {e}")
-        
+            print(f"RapidAPI request failed for track {track_id}: {e}")
+            continue  # Skip this track
         except ValueError:
-        # .json() failed
-            raise HTTPException(status_code=502, detail="Invalid JSON returned from RapidAPI")
+            print(f"Invalid JSON from RapidAPI for track {track_id}")
+            continue  # Skip this track
         
         track_acousticness = raw_audio_features.get('acousticness')
         track_danceability = raw_audio_features.get('danceability')
