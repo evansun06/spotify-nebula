@@ -30,6 +30,7 @@ ALGORITHM = "HS256"
 B64_HEADER = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
 TOKEN_REQUEST_HEADERS = {'Authorization': f'Basic {B64_HEADER}',
                         'Content-Type': 'application/x-www-form-urlencoded'}
+RAPID_API_KEY = os.getenv('RAPID_API_KEY')
 
 router = APIRouter(tags={'auth'})
 security = HTTPBearer()
@@ -230,7 +231,7 @@ async def get_nebula(user: user_dependency):
             track_artists.append(artist_name)
         
         header_parameters = {'x-rapidapi-host': 'track-analysis.p.rapidapi.com',
-                             "x-rapidapi-key": os.getenv('RAPID_API_KEY')}
+                             "x-rapidapi-key": RAPID_API_KEY}
         
         rapid_api_url = f"https://track-analysis.p.rapidapi.com/pktx/spotify/{track_id}"
         
