@@ -2,9 +2,9 @@ import base64
 from datetime import datetime, timedelta, timezone
 import secrets
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, Security
+from fastapi import APIRouter, Depends, HTTPException
 import os
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, OAuth2PasswordBearer
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import httpx
 from fastapi.responses import RedirectResponse
 from urllib.parse import urlencode
@@ -15,6 +15,8 @@ from src.database.models import NebulaUser
 from src.database import crud, create_db
 from jose import JWTError, jwt
 from starlette import status
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
 
@@ -29,7 +31,6 @@ B64_HEADER = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
 TOKEN_REQUEST_HEADERS = {'Authorization': f'Basic {B64_HEADER}',
                         'Content-Type': 'application/x-www-form-urlencoded'}
 
-oauth2_scheme = HTTPBearer()
 router = APIRouter(tags={'auth'})
 security = HTTPBearer()
 
@@ -45,15 +46,15 @@ async def get_user_info(access_token: str):
     return response.json()
 
 def create_access_token(nebula_user_id: int, spotify_user_id: str, display_name: str, expires_delta: timedelta):
-    encode = {'sub': spotify_user_id, 'nebula_user_id': nebula_user_id, 'display_name': display_name, 'exp': expires_delta}
+    encode = {'sub': spotify_user_id, 'nebula_user_id': nebula_user_id, 'display_name': display_name, 'exp': timedelta}
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({'exp': expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
-async def get_current_user(credentials = Depends(security)):
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials  # Extract Bearer token string
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
         spotify_user_id = payload.get("sub")
         nebula_user_id = payload.get("nebula_user_id")
         display_name = payload.get("display_name")
@@ -70,13 +71,32 @@ async def get_current_user(credentials = Depends(security)):
             "display_name": display_name
         }
 
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expired")
-    
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+    except JWTError: raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user.')
 
 user_dependency = Annotated[dict, Depends(get_current_user)]
+
+async def refresh_tokens(user: user_dependency):
+    
+    db_session = next(create_db.get_db())
+    token_model = crud.get_token(db_session, user.get('nebula_user_id'))
+    
+    body_parameters = {
+        'grant_type': 'refresh_token',
+        'refresh_token': token_model.refresh_token,
+    }
+    
+    async with httpx.AsyncClient() as client:
+        token_response = await client.post(f"https://accounts.spotify.com/api/token", data=body_parameters, headers=TOKEN_REQUEST_HEADERS)
+    
+    token_data = token_response.json()
+    new_access_token = token_data.get('access_token')
+    if 'refresh_token' in token_data:
+        new_refresh_token = token_data['refresh_token']
+    else:
+        new_refresh_token = token_model.refresh_token
+    
+    crud.update_tokens(db_session, user.get('nebula_user_id'), new_access_token, new_refresh_token)
+    return new_access_token
 
 @router.get("/login")
 async def login():
@@ -133,40 +153,52 @@ async def callback(code: str):
 
     return {'access_token': token, 'token_type': 'bearer'}
 
-async def refresh_tokens(user: user_dependency):
+class Audio_Features():
+    acousticness: float
+    danceability: float
+    energy: float
+    instrumentalness: float
+    loudness: str
+    tempo: float
+    speechiness:float
     
-    db_session = next(create_db.get_db())
-    token_model = crud.get_token(db_session, user.get('nebula_user_id'))
+    def __init__(self, acousticness: float, danceability: float, 
+                 energy: float, instrumentalness: float, loudness: str, 
+                 tempo: float, speechiness: float):
+        
+        self.acousticness = acousticness
+        self.danceability = danceability
+        self.energy = energy
+        self.instrumentalness = instrumentalness
+        self.loudness = loudness
+        self.tempo = tempo
+        self.speechiness = speechiness
     
-    body_parameters = {
-        'grant_type': 'refresh_token',
-        'refresh_token': token_model.refresh_token,
-    }
+class Track():
+    name: str
+    artists: list
+    audio_features: Audio_Features
     
-    async with httpx.AsyncClient() as client:
-        token_response = await client.post(f"https://accounts.spotify.com/api/token", data=body_parameters, headers=TOKEN_REQUEST_HEADERS)
+    def __init__(self, name: str, artists: str, audio_features: Audio_Features):
+        self.name = name
+        self.artists = artists
+        self.audio_features = audio_features
     
-    token_data = token_response.json()
-    new_access_token = token_data.get('access_token')
-    new_refresh_token = token_data.get('refresh_token')
-    
-    crud.update_tokens(db_session, user.get('nebula_user_id'), new_access_token, new_refresh_token)
-    
-    return token_data
 
-@router.get("/top_100")
-async def get_top_100(user: user_dependency):
+@router.get("/nebula")
+async def get_nebula(user: user_dependency):
     nebula_user_id = user.get('nebula_user_id')
-    db_session = next(create_db.get_db())
     
-    refresh_tokens(user)
+    db_session = next(create_db.get_db())
+    if crud.has_expired_token(db_session, nebula_user_id):
+        refresh_tokens(user)
     
     token_model = crud.get_token(db_session, nebula_user_id)
     access_token = token_model.access_token
     
     body_parameters = {
-        'time_range': 'short_term',
-        'limit': 10,
+        'time_range': 'long_term',
+        'limit': 50,
         'offset': 0
     }
     
@@ -175,7 +207,56 @@ async def get_top_100(user: user_dependency):
     }
     
     url = "https://api.spotify.com/v1/me/top/tracks"
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url, params=body_parameters, headers=header_parameters)
+    
+    
+    response_1 = requests.get(url, params=body_parameters, headers=header_parameters)
+    body_parameters['offset'] = 50
+    response_2 = requests.get(url, params=body_parameters, headers=header_parameters)
         
-    return response.json()
+    items_0_to_50 = response_1.json().get('items', [])
+    items_50_to_100 = response_2.json().get('items', [])
+    
+    items = items_0_to_50 + items_50_to_100
+    
+    tracks = []
+    
+    for item in items:
+        track_name = item.get('name')
+        track_artists = []
+        track_id = item.get('id')
+        
+        for artist in item.get('artists'):
+            artist_name = artist.get('name')
+            track_artists.append(artist_name)
+        
+        header_parameters = {'x-rapidapi-host': 'track-analysis.p.rapidapi.com',
+                             "x-rapidapi-key": os.getenv('RAPID_API_KEY')}
+        
+        rapid_api_url = f"https://track-analysis.p.rapidapi.com/pktx/spotify/{track_id}"
+        
+        response = requests.get(rapid_api_url, headers=header_parameters)
+        if response.status_code != 200:
+            print(f"Error fetching {track_id}: {response.status_code} - {response.text}")
+    
+        raw_audio_features = response.json()
+        
+        track_acousticness = raw_audio_features.get('acousticness')
+        track_danceability = raw_audio_features.get('danceability')
+        track_energy = raw_audio_features.get('energy')
+        track_instrumentalness = raw_audio_features.get('instrumentalness')
+        track_loudness = raw_audio_features.get('loudness')
+        track_tempo = raw_audio_features.get('tempo')
+        track_speechiness = raw_audio_features.get('speechiness')
+        
+        track_audio_feaatures = Audio_Features(track_acousticness,
+                                               track_danceability,
+                                               track_energy,
+                                               track_instrumentalness,
+                                               track_loudness,
+                                               track_tempo,
+                                               track_speechiness)
+        
+        track = Track(track_name, track_artists, track_audio_feaatures)
+        tracks.append(track)
+    
+    return tracks

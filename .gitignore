@@ -71,3 +71,4 @@ coverage.xml
 # Others
 *.env
 .env
+mydatabase.db

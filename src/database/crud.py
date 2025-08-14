@@ -45,50 +45,40 @@ def create_nebula_user(db_session: Session, spotify_user_id: str, display_name: 
 
 ## Update Tokens For a Given User
 def update_tokens(db_session: Session, nebula_user_id: int, access_token:str, refresh_token:str):
-    existing_record = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == nebula_user_id).first()
-    if existing_record:
-        record = db_session.query(SpotifyToken).filter_by(user_id=nebula_user_id).first()
-        record.access_token = access_token
-        record.expires_at=expires_at=datetime.now(timezone.utc) + timedelta(seconds=3600),
-        record.updated_at=datetime.now(timezone.utc)
-        return record
+    token_model = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == nebula_user_id).first()
+    
+    if token_model:
+        token_model.access_token = access_token
+        token_model.expires_at=datetime.now(timezone.utc) + timedelta(seconds=3600)
+        token_model.updated_at=datetime.now(timezone.utc)
+        
+        db_session.add(token_model)
+        db_session.commit()
+        return token_model
+    
     else:
-        new_token_record = SpotifyToken(user_id=nebula_user_id,
-            access_token=access_token,
-            refresh_token=refresh_token,
-            expires_at=datetime.now(timezone.utc) + timedelta(seconds=3600),
-            updated_at=datetime.now(timezone.utc)
-        )
+        new_token_model = SpotifyToken(user_id=nebula_user_id,
+                                        access_token=access_token,
+                                        refresh_token=refresh_token,
+                                        expires_at=datetime.now(timezone.utc) + timedelta(seconds=3600),
+                                        updated_at=datetime.now(timezone.utc))
 
         try: 
-            db_session.add(new_token_record)
-            db_session.commit()  # Commit the transaction to save to DB
-            db_session.refresh(new_token_record)
+            db_session.add(new_token_model)
+            db_session.commit()
+            
         except SQLAlchemyError as e:
             db_session.rollback()
             raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
         
-        print("Sucess")
-        return new_token_record
+        return new_token_model
         
 
 ## Checks if a user has an expired token.
 def has_expired_token(db_session:Session,  nebula_user_id: int) -> bool:
-    # existing_record = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == nebula_user_id).first()
-    # if existing_record:
-    #     return existing_record.expires_at > datetime.now(timezone.utc)
-    # else:
-    #     return True
     existing_record = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == nebula_user_id).first()
-    if existing_record:
-        expires_at = existing_record.expires_at
-        if expires_at.tzinfo is None:
-            expires_at = expires_at.replace(tzinfo=timezone.utc)
-        return expires_at > datetime.now(timezone.utc)
-    return True
-
-
-    
+    expires_at = existing_record.expires_at.replace(tzinfo=timezone.utc)
+    return expires_at <= datetime.now(timezone.utc)
 
 
 
