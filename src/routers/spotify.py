@@ -15,7 +15,6 @@ from src.database.models import NebulaUser
 from src.database import crud, create_db
 from jose import JWTError, jwt
 from starlette import status
-import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from src import models
 import time
@@ -205,7 +204,7 @@ async def get_nebula(user: user_dependency):
     access_token = token_model.access_token
     
     body_parameters = {
-        'time_range': 'short_term',
+        'time_range': 'long_term',
         'limit': 50,
         'offset': 0
     }
@@ -260,7 +259,7 @@ async def get_nebula(user: user_dependency):
         track_energy = raw_audio_features.get('energy')
         track_instrumentalness = raw_audio_features.get('instrumentalness')
         track_loudness_str = raw_audio_features.get('loudness')
-        track_loudness = int(track_loudness_str.replace(" dB", ""))
+        track_loudness = float(str(track_loudness_str).replace(" dB", "").strip())
         track_tempo = raw_audio_features.get('tempo')
         track_speechiness = raw_audio_features.get('speechiness')
 

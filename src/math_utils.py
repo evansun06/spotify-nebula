@@ -7,13 +7,16 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from . import models 
+from sklearn.preprocessing import StandardScaler  # Standardizes features
+import umap.umap_ as umap  # UMAP for dimensionality reduction
+import hdbscan  # HDBSCAN for clustering
 
 SEED = 2025
 
 
 ### Main Pipline
 ### Workflow: Standardize -> Perform KNN / Tune Epsilon -> Apply DBSCAN Clustering -> Project Via TSNE -> Wrap
-def pipline(tracklist:list[models.Track]) -> list[models.Projected_Track]:
+def pipline(tracklist: list[models.Track]) -> list[models.Projected_Track]:
     #1 Build Audio Feature Matrix
     feature_matrix = np.array([
         [
@@ -29,20 +32,16 @@ def pipline(tracklist:list[models.Track]) -> list[models.Projected_Track]:
     ])
 
     #2 Create Standardizer
-    scaler = StandardScaler()
-    matrix_scaled = scaler.fit_transform(feature_matrix)
+    scaler = StandardScaler()  # Standardize each feature to mean=0, std=1
+    matrix_scaled = scaler.fit_transform(feature_matrix)  # Apply scaling
 
-    
+    #3 Apply UMAP
+    reducer = umap.UMAP(n_components=3, random_state=SEED)  # Create UMAP reducer to 3D space
+    projection = reducer.fit_transform(matrix_scaled)  # Project standardized features into 3D
 
-    #3 Apply DBSCAN
-    dbscan = DBSCAN(eps=3, min_samples=40)
-    labels = dbscan.fit_predict(matrix_scaled)
-
-    #4 Project
-    tsne = TSNE(n_components=3, perplexity=30, random_state=SEED)
-    projection = tsne.fit_transform(matrix_scaled)
-
-    
+    #4 Apply HDBSCAN
+    clusterer = hdbscan.HDBSCAN(min_cluster_size=5)  # Create HDBSCAN clusterer, requiring at least 5 points per cluster
+    labels = clusterer.fit_predict(projection)  # Assign cluster labels based on density in 3D UMAP space
 
     #5 Wrap results
     projected_tracks = [

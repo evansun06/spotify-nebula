@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from .routers import spotify
-from .database import crud, create_db
+from src.routers import spotify
+from src.database import crud, create_db
 
 from src.database.create_db import engine, Base
 
