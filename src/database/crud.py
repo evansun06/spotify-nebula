@@ -1,50 +1,52 @@
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
-from .models import Base, SpotifyToken, NebulaUser
-from typing import Annotated
-from fastapi import HTTPException, Depends
-from . import create_db
+from .models import SpotifyToken, NebulaUser
+from fastapi import HTTPException
 from datetime import datetime, timezone, timedelta
 
+'''CRUD for SQL database'''
 
-
-## Errors
 class TokenNotFoundError(Exception):
-    pass
+    '''Token not found exception'''
 
-## Retrieve an API Access Token using a Nebula User ID
 def get_token(db_session: Session, neb_user_id: int):
+    '''Returns token for given nebula user'''
+    
     token = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == neb_user_id).first()
     if token is None:
         raise TokenNotFoundError(f"No access token found for user_id {neb_user_id}")
     else: 
         return token
 
-## Create a NebulaUser
 def create_nebula_user(db_session: Session, spotify_user_id: str, display_name: str):
+    '''Creates nebula user and returns user, if user already exists return existing user'''
+    
     existing_user = db_session.query(NebulaUser).filter(NebulaUser.spotify_user_id == spotify_user_id).first()
     if existing_user: 
         return existing_user
     
     new_user = NebulaUser(spotify_user_id = spotify_user_id, display_name = display_name)
+    
     try: 
         db_session.add(new_user)
-        db_session.commit()  # Commit the transaction to save to DB
+        db_session.commit()
         db_session.refresh(new_user)
+        
     except SQLAlchemyError as e:
         db_session.rollback()
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
     
-     # Verify user was added
     verified_user = db_session.query(NebulaUser).filter_by(spotify_user_id=spotify_user_id).first()
+    
     if not verified_user:
         raise HTTPException(status_code=500, detail="User creation failed")
     
     return verified_user
 
 
-## Update Tokens For a Given User
 def update_tokens(db_session: Session, nebula_user_id: int, access_token:str, refresh_token:str):
+    '''Updates and returns tokens for given user'''
+    
     token_model = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == nebula_user_id).first()
     
     if token_model:
@@ -72,19 +74,11 @@ def update_tokens(db_session: Session, nebula_user_id: int, access_token:str, re
             raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
         
         return new_token_model
-        
 
-## Checks if a user has an expired token.
+
 def has_expired_token(db_session:Session,  nebula_user_id: int) -> bool:
+    '''Returns true if tokens are expired, otherwise false'''
+    
     existing_record = db_session.query(SpotifyToken).filter(SpotifyToken.user_id == nebula_user_id).first()
     expires_at = existing_record.expires_at.replace(tzinfo=timezone.utc)
     return expires_at <= datetime.now(timezone.utc)
-
-
-
-
-
-
-
-
-

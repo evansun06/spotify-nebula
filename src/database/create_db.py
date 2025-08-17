@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine
-from .models import Base, NebulaUser, SpotifyToken
-from sqlalchemy.orm import sessionmaker, Session
+from .models import Base
+from sqlalchemy.orm import sessionmaker
 
-
+'''Creates SQL database'''
 
 URL = 'sqlite:///./mydatabase.db'
 
