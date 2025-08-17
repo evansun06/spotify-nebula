@@ -1,10 +1,8 @@
+import asyncio
 import base64
-import requests
 import secrets
 import os
 import httpx
-import time
-import requests
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
@@ -24,18 +22,20 @@ load_dotenv()
 
 
 '''Constants'''
-SPOTIFY_AUTHORIZE_BASE_URL = "https://accounts.spotify.com"
-SPOTIFY_CALL_BASE_URL = "https://api.spotify.com/v1/me"
-CLIENT_ID = os.getenv("CLIENT_ID")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-REDIRECT_URI = os.getenv("REDIRECT_URI")
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = "HS256"
-B64_HEADER = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
-TOKEN_REQUEST_HEADERS = {'Authorization': f'Basic {B64_HEADER}',
-                        'Content-Type': 'application/x-www-form-urlencoded'}
-RAPID_API_KEY = os.getenv('RAPID_API_KEY')
+SPOTIFY_AUTHORIZE_BASE_URL = 'https://accounts.spotify.com'
+SPOTIFY_CALL_BASE_URL = 'https://api.spotify.com/v1/me'
 
+CLIENT_ID = os.getenv('CLIENT_ID')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+B64_HEADER = base64.b64encode(f'{CLIENT_ID}:{CLIENT_SECRET}'.encode()).decode()
+SPOTIFY_TOKEN_REQUEST_HEADERS = {'Authorization': f'Basic {B64_HEADER}', 'Content-Type': 'application/x-www-form-urlencoded'}
+REDIRECT_URI = os.getenv('REDIRECT_URI')
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+ALGORITHM = 'HS256'
+
+RAPID_API_KEY = os.getenv('RAPID_API_KEY')
+RAPID_API_HEADERS = {'x-rapidapi-host': 'track-analysis.p.rapidapi.com', 'x-rapidapi-key': RAPID_API_KEY}
 
 '''API Router and HTTP bearer'''
 router = APIRouter(tags={'spotify'})
@@ -53,7 +53,7 @@ class Token(BaseModel):
 async def get_user_info(access_token: str):
     '''Returns spotify profile for current user'''
     
-    header = {"Authorization": f'Bearer {access_token}'}
+    header = {'Authorization': f'Bearer {access_token}'}
     async with httpx.AsyncClient() as client:
         response = await client.get(SPOTIFY_CALL_BASE_URL, headers=header)
         
@@ -73,20 +73,20 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     token = credentials.credentials  # Extract Bearer token string
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
-        spotify_user_id = payload.get("sub")
-        nebula_user_id = payload.get("nebula_user_id")
-        display_name = payload.get("display_name")
+        spotify_user_id = payload.get('sub')
+        nebula_user_id = payload.get('nebula_user_id')
+        display_name = payload.get('display_name')
 
         if not spotify_user_id:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token: missing sub"
+                detail='Invalid token: missing sub'
             )
 
         return {
-            "spotify_user_id": spotify_user_id,
-            "nebula_user_id": nebula_user_id,
-            "display_name": display_name
+            'spotify_user_id': spotify_user_id,
+            'nebula_user_id': nebula_user_id,
+            'display_name': display_name
         }
 
     except JWTError: raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user.')
@@ -105,10 +105,11 @@ async def refresh_tokens(user: user_dependency):
     }
     
     async with httpx.AsyncClient() as client:
-        token_response = await client.post(f"https://accounts.spotify.com/api/token", data=body_parameters, headers=TOKEN_REQUEST_HEADERS)
+        token_response = await client.post(f'https://accounts.spotify.com/api/token', data=body_parameters, headers=SPOTIFY_TOKEN_REQUEST_HEADERS)
     
     token_data = token_response.json()
     new_access_token = token_data.get('access_token')
+    
     if 'refresh_token' in token_data:
         new_refresh_token = token_data['refresh_token']
     else:
@@ -117,8 +118,45 @@ async def refresh_tokens(user: user_dependency):
     crud.update_tokens(db_session, user.get('nebula_user_id'), new_access_token, new_refresh_token)
     return new_access_token
 
+
+async def get_audio_features(track: models.Track, headers: dict):
+    '''Gets audio features for a track and returns track, if track does not exist, returns None'''
+    
+    track_id = track.spotify_id
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(f'https://track-analysis.p.rapidapi.com/pktx/spotify/{track_id}', headers=headers, timeout=5)
+        
+        resp.raise_for_status()
+        raw_audio_features = resp.json()
+        
+        track_acousticness = raw_audio_features.get('acousticness')
+        track_danceability = raw_audio_features.get('danceability')
+        track_energy = raw_audio_features.get('energy')
+        track_instrumentalness = raw_audio_features.get('instrumentalness')
+        track_loudness = float(str(raw_audio_features.get('loudness', 0)).replace(' dB', '').strip())
+        track_tempo = raw_audio_features.get('tempo')
+        track_speechiness = raw_audio_features.get('speechiness')
+
+        track.audio_features = models.Audio_Features(acousticness=track_acousticness,
+                                                     danceability=track_danceability,
+                                                     energy=track_energy,
+                                                     instrumentalness=track_instrumentalness,
+                                                     loudness=track_loudness,
+                                                     tempo=track_tempo,
+                                                     speechiness=track_speechiness)
+            
+        print(f'Successful for {track.name}')
+        return track
+        
+    except (httpx.HTTPError, ValueError) as e:
+        print(f'Failed for track {track.name}: {e}')
+        return None
+    
+
 '''API Endpoints'''
-@router.get("/login")
+@router.get('/login')
 async def login():
     '''Redirects to Spotify Oauth'''
     
@@ -138,7 +176,7 @@ async def login():
     
     return RedirectResponse(url=auth_url)
 
-@router.get("/callback/", response_model=Token)
+@router.get('/callback/', response_model=Token)
 async def callback(code: str):
     '''Creates user, access token, refresh token in SQL database, and returns user info as encoded JWT token'''
     
@@ -149,9 +187,9 @@ async def callback(code: str):
     }
     
     async with httpx.AsyncClient() as client:
-        token_data_response = await client.post(f"{SPOTIFY_AUTHORIZE_BASE_URL}/api/token", 
+        token_data_response = await client.post(f'{SPOTIFY_AUTHORIZE_BASE_URL}/api/token', 
                                                 data=body_parameters, 
-                                                headers=TOKEN_REQUEST_HEADERS)
+                                                headers=SPOTIFY_TOKEN_REQUEST_HEADERS)
     
     token_data = token_data_response.json()
     access_token = token_data.get('access_token')
@@ -166,115 +204,67 @@ async def callback(code: str):
     try:
          user = crud.create_nebula_user(db_session, spotify_user_id, display_name)
     except HTTPException as e:
-        return {"message": f'{e}'} 
+        return {'message': f'{e}'} 
     
     try: 
         crud.update_tokens(db_session, user.id, access_token, refresh_token)
     except HTTPException as e:
-        return {"message": f'{e}'} 
+        return {'message': f'{e}'} 
     
     token = create_access_token(user.id, user.spotify_user_id, user.display_name, timedelta(minutes=1000))
 
     return {'access_token': token, 'token_type': 'bearer'}
 
 
-@router.get("/nebula")
+@router.get('/nebula')
 async def get_nebula(user: user_dependency):
-    '''Parses top 100 tracks from user's spotify to render spotify nebula'''
-    
+    '''Parses top 100 tracks from user's Spotify to render Spotify nebula'''
+
     nebula_user_id = user.get('nebula_user_id')
-    
     db_session = next(create_db.get_db())
+
     if crud.has_expired_token(db_session, nebula_user_id):
-        refresh_tokens(user)
+        await refresh_tokens(user)
     
     token_model = crud.get_token(db_session, nebula_user_id)
     access_token = token_model.access_token
-    
-    body_parameters = {
-        'time_range': 'short_term',
-        'limit': 50,
-        'offset': 0
-    }
-    
-    header_parameters = {
-        'Authorization': f'Bearer {access_token}'
-    }
-    
-    url = "https://api.spotify.com/v1/me/top/tracks"
-    
-    
-    response_1 = requests.get(url, params=body_parameters, headers=header_parameters)
-    body_parameters['offset'] = 50
-    response_2 = requests.get(url, params=body_parameters, headers=header_parameters)
-        
-    items_0_to_50 = response_1.json().get('items', [])
-    items_50_to_100 = response_2.json().get('items', [])
-    
-    items = items_0_to_50 + items_50_to_100
-    
-    tracks = []
+
+    body_parameters = {'time_range': 'short_term', 'limit': 50, 'offset': 0}
+    header_parameters = {'Authorization': f'Bearer {access_token}'}
+    url = f'{SPOTIFY_CALL_BASE_URL}/top/tracks'
+
+    async with httpx.AsyncClient() as client:
+        response_1 = await client.get(url, params=body_parameters, headers=header_parameters)
+        body_parameters['offset'] = 50
+        response_2 = await client.get(url, params=body_parameters, headers=header_parameters)
+
+    items = response_1.json().get('items', []) + response_2.json().get('items', [])
+
+    tracks_no_af = []
     
     for item in items:
-        track_name = item.get('name')
-        track_artists = []
-        track_id = item.get('id')
-        print(f"Requesting audio features for track ID: {track_id}")
-        
-        for artist in item.get('artists'):
-            artist_name = artist.get('name')
-            track_artists.append(artist_name)
-        
-        header_parameters = {'x-rapidapi-host': 'track-analysis.p.rapidapi.com',
-                             "x-rapidapi-key": RAPID_API_KEY}
-        
-        rapid_api_url = f"https://track-analysis.p.rapidapi.com/pktx/spotify/{track_id}"
-        
-        try:
-            resp = requests.get(rapid_api_url, headers=header_parameters, timeout=5)
-            resp.raise_for_status()
-            raw_audio_features = resp.json()
+        track_artists = [artist['name'] for artist in item.get('artists', [])]
+        track = models.Track(name=item.get('name'),
+                             artist=track_artists,
+                             spotify_id=item.get('id'))
+        tracks_no_af.append(track)
 
-        except requests.exceptions.RequestException as e:
-            print(f"RapidAPI request failed for track {track_id}: {e}")
-            continue
-        
-        except ValueError:
-            print(f"Invalid JSON from RapidAPI for track {track_id}")
-            continue
-        
-        track_acousticness = raw_audio_features.get('acousticness')
-        track_danceability = raw_audio_features.get('danceability')
-        track_energy = raw_audio_features.get('energy')
-        track_instrumentalness = raw_audio_features.get('instrumentalness')
-        track_loudness_str = raw_audio_features.get('loudness')
-        track_loudness_str = raw_audio_features.get('loudness')
-
-        if not track_loudness_str:
-            print(f"Skipping track {track_id}, no loudness value")
-            continue
-
-        track_loudness = float(str(track_loudness_str).replace(" dB", "").strip())
-        track_tempo = raw_audio_features.get('tempo')
-        track_speechiness = raw_audio_features.get('speechiness')
-
+    coroutines = []
     
-        
-        track_audio_features = models.Audio_Features(acousticness=track_acousticness,
-                                               danceability=track_danceability,
-                                               energy=track_energy,
-                                               instrumentalness=track_instrumentalness,
-                                               loudness=track_loudness,
-                                               tempo=track_tempo,
-                                               speechiness=track_speechiness)
-        
-        track = models.Track(name=track_name, artist=track_artists, audio_features=track_audio_features)
-        tracks.append(track)
-        print('Track successfully created')
-        time.sleep(0.05)
+    for track in tracks_no_af:
+        track = get_audio_features(track, RAPID_API_HEADERS)
+        coroutines.append(track)
+    
+    unfiltered_tracks = await asyncio.gather(*coroutines)
+
+    tracks = []
+    
+    for track in unfiltered_tracks:
+        if track is not None:
+            tracks.append(track)
 
     processed_tracks = math_utils.pipline(tracks)
-
-    plot_utils.visualize_projected_tracks(processed_tracks)
     
+    plot_utils.visualize_projected_tracks(processed_tracks)
+
     return processed_tracks
