@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 
 class Audio_Features(BaseModel):
@@ -16,7 +17,9 @@ class Track(BaseModel):
     
     name: str
     artist: list
-    audio_features: Audio_Features
+    spotify_id: str
+    audio_features: Optional[Audio_Features] = None
+
 
 class Projected_Track(BaseModel):
     '''Pydantic model for projected track used in nebula rendering'''
