@@ -243,18 +243,38 @@ async def get_nebula(user: user_dependency):
 
     tracks = []
 
-    for item in items:
-        track_artists = [artist['name'] for artist in item.get('artists', [])]
-        track = models.Track(name=item.get('name'),
-                             artist=track_artists,
-                             spotify_id=item.get('id'))
+    #Cap at 2 threads
+    semaphore = asyncio.Semaphore(2)
+    async def limited_get_audio_features(track):
+        async with semaphore:
+            return await get_audio_features(track, RAPID_API_HEADERS)
 
-        enriched_track = await get_audio_features(track, RAPID_API_HEADERS)
-        if enriched_track is not None:
-            tracks.append(enriched_track)
-
-    processed_tracks = math_utils.pipline(tracks)
+    #Build Track objects
+    tracks_no_af = [
+        models.Track(
+            name=item.get('name'),
+            artist=[artist['name'] for artist in item.get('artists', [])],
+            spotify_id=item.get('id')
+        )
+        for item in items
+    ]
     
+    tasks = []
+    for track in tracks_no_af:
+        task = limited_get_audio_features(track)
+        tasks.append(task)
+
+    #Run all tasks concurrently with limit
+    tracks_ready = await asyncio.gather(*tasks)
+
+    #Filter out any None results
+    tracks = []
+    for track in tracks_ready:
+        if track is not None:
+             tracks.append(track)
+
+    #Process and visualize
+    processed_tracks = math_utils.pipline(tracks)
     plot_utils.visualize_projected_tracks(processed_tracks)
 
     return processed_tracks
