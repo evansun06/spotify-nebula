@@ -11,19 +11,19 @@ from urllib.parse import urlencode
 from dotenv import load_dotenv
 from pydantic import BaseModel
 import requests
-from src.database.models import NebulaUser
 from src.database import crud, create_db
 from jose import JWTError, jwt
 from starlette import status
-from spotipy.oauth2 import SpotifyOAuth
 from src import models
 import time
 import requests
 from src import math_utils, plot_utils
 
-
+'''Load .env'''
 load_dotenv()
 
+
+'''Constants'''
 SPOTIFY_AUTHORIZE_BASE_URL = "https://accounts.spotify.com"
 SPOTIFY_CALL_BASE_URL = "https://api.spotify.com/v1/me"
 CLIENT_ID = os.getenv("CLIENT_ID")
@@ -36,15 +36,23 @@ TOKEN_REQUEST_HEADERS = {'Authorization': f'Basic {B64_HEADER}',
                         'Content-Type': 'application/x-www-form-urlencoded'}
 RAPID_API_KEY = os.getenv('RAPID_API_KEY')
 
+
+'''API Router'''
 router = APIRouter(tags={'auth'})
 security = HTTPBearer()
 
 
+'''Pydantic Models'''
 class Token(BaseModel):
+    '''Pydantic model token return'''
     access_token: str
     token_type: str
 
+
+'''Helper Functions'''
 async def get_user_info(access_token: str):
+    '''Returns spotify profile for current user'''
+    
     header = {"Authorization": f'Bearer {access_token}'}
     async with httpx.AsyncClient() as client:
         response = await client.get(SPOTIFY_CALL_BASE_URL, headers=header)
@@ -52,12 +60,16 @@ async def get_user_info(access_token: str):
     return response.json()
 
 def create_access_token(nebula_user_id: int, spotify_user_id: str, display_name: str, expires_delta: timedelta):
+    '''Creates JWT access token for user with given nebula user ID, spotify user ID, display name, and expirey time'''
+    
     encode = {'sub': spotify_user_id, 'nebula_user_id': nebula_user_id, 'display_name': display_name, 'exp': timedelta}
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({'exp': expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    '''Decodes and parses token to returns dict of nebula user ID, spotify user ID, display name, and expirey time'''
+    
     token = credentials.credentials  # Extract Bearer token string
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
@@ -79,9 +91,11 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
     except JWTError: raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user.')
 
+'''Dependency'''
 user_dependency = Annotated[dict, Depends(get_current_user)]
 
 async def refresh_tokens(user: user_dependency):
+    '''Refreshes spotify access token and updates SQL database'''
     
     db_session = next(create_db.get_db())
     token_model = crud.get_token(db_session, user.get('nebula_user_id'))
@@ -104,8 +118,11 @@ async def refresh_tokens(user: user_dependency):
     crud.update_tokens(db_session, user.get('nebula_user_id'), new_access_token, new_refresh_token)
     return new_access_token
 
+'''API Endpoints'''
 @router.get("/login")
 async def login():
+    '''Redirects to Spotify Oauth'''
+    
     state = secrets.token_urlsafe(16)
     
     query_parameters = {
@@ -124,6 +141,8 @@ async def login():
 
 @router.get("/callback/", response_model=Token)
 async def callback(code: str):
+    '''Creates user, access token, refresh token in SQL database, and returns user info as encoded JWT token'''
+    
     body_parameters = {
         'grant_type': 'authorization_code',
         'code': code,
@@ -159,41 +178,11 @@ async def callback(code: str):
 
     return {'access_token': token, 'token_type': 'bearer'}
 
-# class Audio_Features():
-#     acousticness: float
-#     danceability: float
-#     energy: float
-#     instrumentalness: float
-#     loudness: str
-#     tempo: float
-#     speechiness:float
-    
-#     def __init__(self, acousticness: float, danceability: float, 
-#                  energy: float, instrumentalness: float, loudness: str, 
-#                  tempo: float, speechiness: float):
-        
-#         self.acousticness = acousticness
-#         self.danceability = danceability
-#         self.energy = energy
-#         self.instrumentalness = instrumentalness
-#         self.loudness = loudness
-#         self.tempo = tempo
-#         self.speechiness = speechiness
-    
-# class Track():
-#     name: str
-#     artists: list
-#     audio_features: Audio_Features
-    
-#     def __init__(self, name: str, artists: str, audio_features: Audio_Features):
-#         self.name = name
-#         self.artists = artists
-#         self.audio_features = audio_features
-    
-
 
 @router.get("/nebula")
 async def get_nebula(user: user_dependency):
+    '''Parses top 100 tracks from user's spotify to render spotify nebula'''
+    
     nebula_user_id = user.get('nebula_user_id')
     
     db_session = next(create_db.get_db())
