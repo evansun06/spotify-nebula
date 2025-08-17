@@ -1,22 +1,22 @@
 import base64
-from datetime import datetime, timedelta, timezone
+import requests
 import secrets
+import os
+import httpx
+import time
+import requests
+from datetime import datetime, timedelta, timezone
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
-import os
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-import httpx
 from fastapi.responses import RedirectResponse
 from urllib.parse import urlencode
 from dotenv import load_dotenv
 from pydantic import BaseModel
-import requests
 from src.database import crud, create_db
 from jose import JWTError, jwt
 from starlette import status
 from src import models
-import time
-import requests
 from src import math_utils, plot_utils
 
 '''Load .env'''
