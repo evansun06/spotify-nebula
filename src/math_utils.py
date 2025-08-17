@@ -35,7 +35,11 @@ def pipline(tracklist: list[models.Track]) -> list[models.Projected_Track]:
     matrix_scaled = scaler.fit_transform(feature_matrix)  # Apply scaling
 
     #3 Apply UMAP
-    reducer = umap.UMAP(n_components=3, random_state=SEED)  # Create UMAP reducer to 3D space
+    reducer = umap.UMAP(
+        n_components=3,
+        random_state=SEED)
+    
+    # Create UMAP reducer to 3D space
     projection = reducer.fit_transform(matrix_scaled)  # Project standardized features into 3D
 
     #4 Apply HDBSCAN

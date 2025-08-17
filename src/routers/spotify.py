@@ -3,6 +3,7 @@ import base64
 import secrets
 import os
 import httpx
+import time
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
@@ -151,7 +152,7 @@ async def get_audio_features(track: models.Track, headers: dict):
         return track
         
     except (httpx.HTTPError, ValueError) as e:
-        print(f'Failed for track {track.name}: {e}')
+        print(f'Failed for track {track.name} e:{e}')
         return None
     
 
@@ -229,7 +230,7 @@ async def get_nebula(user: user_dependency):
     token_model = crud.get_token(db_session, nebula_user_id)
     access_token = token_model.access_token
 
-    body_parameters = {'time_range': 'short_term', 'limit': 50, 'offset': 0}
+    body_parameters = {'time_range': 'long_term', 'limit': 50, 'offset': 0}
     header_parameters = {'Authorization': f'Bearer {access_token}'}
     url = f'{SPOTIFY_CALL_BASE_URL}/top/tracks'
 
@@ -240,28 +241,17 @@ async def get_nebula(user: user_dependency):
 
     items = response_1.json().get('items', []) + response_2.json().get('items', [])
 
-    tracks_no_af = []
-    
+    tracks = []
+
     for item in items:
         track_artists = [artist['name'] for artist in item.get('artists', [])]
         track = models.Track(name=item.get('name'),
                              artist=track_artists,
                              spotify_id=item.get('id'))
-        tracks_no_af.append(track)
 
-    coroutines = []
-    
-    for track in tracks_no_af:
-        track = get_audio_features(track, RAPID_API_HEADERS)
-        coroutines.append(track)
-    
-    unfiltered_tracks = await asyncio.gather(*coroutines)
-
-    tracks = []
-    
-    for track in unfiltered_tracks:
-        if track is not None:
-            tracks.append(track)
+        enriched_track = await get_audio_features(track, RAPID_API_HEADERS)
+        if enriched_track is not None:
+            tracks.append(enriched_track)
 
     processed_tracks = math_utils.pipline(tracks)
     
