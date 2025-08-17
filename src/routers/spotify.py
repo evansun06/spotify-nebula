@@ -37,8 +37,8 @@ TOKEN_REQUEST_HEADERS = {'Authorization': f'Basic {B64_HEADER}',
 RAPID_API_KEY = os.getenv('RAPID_API_KEY')
 
 
-'''API Router'''
-router = APIRouter(tags={'auth'})
+'''API Router and HTTP bearer'''
+router = APIRouter(tags={'spotify'})
 security = HTTPBearer()
 
 
@@ -91,7 +91,6 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
     except JWTError: raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user.')
 
-'''Dependency'''
 user_dependency = Annotated[dict, Depends(get_current_user)]
 
 async def refresh_tokens(user: user_dependency):
@@ -193,7 +192,7 @@ async def get_nebula(user: user_dependency):
     access_token = token_model.access_token
     
     body_parameters = {
-        'time_range': 'long_term',
+        'time_range': 'short_term',
         'limit': 50,
         'offset': 0
     }
@@ -238,16 +237,23 @@ async def get_nebula(user: user_dependency):
 
         except requests.exceptions.RequestException as e:
             print(f"RapidAPI request failed for track {track_id}: {e}")
-            continue  # Skip this track
+            continue
+        
         except ValueError:
             print(f"Invalid JSON from RapidAPI for track {track_id}")
-            continue  # Skip this track
+            continue
         
         track_acousticness = raw_audio_features.get('acousticness')
         track_danceability = raw_audio_features.get('danceability')
         track_energy = raw_audio_features.get('energy')
         track_instrumentalness = raw_audio_features.get('instrumentalness')
         track_loudness_str = raw_audio_features.get('loudness')
+        track_loudness_str = raw_audio_features.get('loudness')
+
+        if not track_loudness_str:
+            print(f"Skipping track {track_id}, no loudness value")
+            continue
+
         track_loudness = float(str(track_loudness_str).replace(" dB", "").strip())
         track_tempo = raw_audio_features.get('tempo')
         track_speechiness = raw_audio_features.get('speechiness')
@@ -264,11 +270,11 @@ async def get_nebula(user: user_dependency):
         
         track = models.Track(name=track_name, artist=track_artists, audio_features=track_audio_features)
         tracks.append(track)
+        print('Track successfully created')
         time.sleep(0.05)
 
     processed_tracks = math_utils.pipline(tracks)
 
     plot_utils.visualize_projected_tracks(processed_tracks)
-    
     
     return processed_tracks

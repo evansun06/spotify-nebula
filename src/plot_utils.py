@@ -1,12 +1,9 @@
 import plotly.express as px
 import pandas as pd
 from . import models
-import os
 import numpy as np
 import random
 import string
-from src.models import Track, Audio_Features  # adjust import path to your code
-from . import math_utils
 
 def visualize_projected_tracks(projected_tracks: list[models.Projected_Track], output_folder: str = "track_visualizations", filename: str = "projected_tracks.html"):
     # Convert to DataFrame
@@ -57,15 +54,3 @@ def generate_feature_dict(center, spread=0.1):
         "tempo":             np.clip(np.random.normal(center[6], spread * 200), 60, 200),
         "speechiness":       np.clip(np.random.normal(center[7], spread), 0, 1)
     }
-
-# Generate 100 clustered tracks
-# mock_tracks = [
-#     Track(
-#         name=f"Song {random_string()}",
-#         artist=random_artist_list(),
-#         audio_features=Audio_Features(**generate_feature_dict(random.choice(cluster_centers)))
-#     )
-#     for _ in range(100)
-# ]
-
-# visualize_projected_tracks(math_utils.pipline(mock_tracks))

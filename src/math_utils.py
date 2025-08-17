@@ -13,7 +13,6 @@ import hdbscan  # HDBSCAN for clustering
 
 SEED = 2025
 
-
 ### Main Pipline
 ### Workflow: Standardize -> Perform KNN / Tune Epsilon -> Apply DBSCAN Clustering -> Project Via TSNE -> Wrap
 def pipline(tracklist: list[models.Track]) -> list[models.Projected_Track]:
