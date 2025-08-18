@@ -1,3 +1,4 @@
+
 import asyncio
 import base64
 import secrets
@@ -17,6 +18,7 @@ from jose import JWTError, jwt
 from starlette import status
 from src import models
 from src import math_utils, plot_utils
+from aiolimiter import AsyncLimiter
 
 '''Load .env'''
 load_dotenv()
@@ -38,9 +40,13 @@ ALGORITHM = 'HS256'
 RAPID_API_KEY = os.getenv('RAPID_API_KEY')
 RAPID_API_HEADERS = {'x-rapidapi-host': 'track-analysis.p.rapidapi.com', 'x-rapidapi-key': RAPID_API_KEY}
 
-'''API Router and HTTP bearer'''
+MAX_CONCURRENT = 10
+MAX_PER_SEC = 8
+
+'''API Router, HTTP Bearer and Async Limiter'''
 router = APIRouter(tags={'spotify'})
 security = HTTPBearer()
+limiter = AsyncLimiter(10, 1)
 
 
 '''Pydantic Models'''
@@ -120,14 +126,14 @@ async def refresh_tokens(user: user_dependency):
     return new_access_token
 
 
-async def get_audio_features(track: models.Track, headers: dict):
+async def get_audio_features(track: models.Track):
     '''Gets audio features for a track and returns track, if track does not exist, returns None'''
     
     track_id = track.spotify_id
     
     try:
         async with httpx.AsyncClient() as client:
-            resp = await client.get(f'https://track-analysis.p.rapidapi.com/pktx/spotify/{track_id}', headers=headers, timeout=5)
+            resp = await client.get(f'https://track-analysis.p.rapidapi.com/pktx/spotify/{track_id}', headers=RAPID_API_HEADERS, timeout=5)
         
         resp.raise_for_status()
         raw_audio_features = resp.json()
@@ -155,6 +161,13 @@ async def get_audio_features(track: models.Track, headers: dict):
         print(f'Failed for track {track.name} e:{e}')
         return None
     
+async def limited_get_audio_features(track):
+    async with limiter:
+        return await get_audio_features(track)
+
+async def get_task_delayed(track, delay):
+    await asyncio.sleep(delay)
+    return await limited_get_audio_features(track)
 
 '''API Endpoints'''
 @router.get('/login')
@@ -217,8 +230,8 @@ async def callback(code: str):
     return {'access_token': token, 'token_type': 'bearer'}
 
 
-@router.get('/nebula')
-async def get_nebula(user: user_dependency):
+@router.get('/nebula/{term}')
+async def get_nebula(user: user_dependency, term: str):
     '''Parses top 100 tracks from user's Spotify to render Spotify nebula'''
 
     nebula_user_id = user.get('nebula_user_id')
@@ -230,7 +243,7 @@ async def get_nebula(user: user_dependency):
     token_model = crud.get_token(db_session, nebula_user_id)
     access_token = token_model.access_token
 
-    body_parameters = {'time_range': 'long_term', 'limit': 50, 'offset': 0}
+    body_parameters = {'time_range': term, 'limit': 50, 'offset': 0}
     header_parameters = {'Authorization': f'Bearer {access_token}'}
     url = f'{SPOTIFY_CALL_BASE_URL}/top/tracks'
 
@@ -241,39 +254,38 @@ async def get_nebula(user: user_dependency):
 
     items = response_1.json().get('items', []) + response_2.json().get('items', [])
 
-    tracks = []
+    # Get tracks with no audio features
+    tracks_no_af = []
 
-    #Cap at 2 threads
-    semaphore = asyncio.Semaphore(2)
-    async def limited_get_audio_features(track):
-        async with semaphore:
-            return await get_audio_features(track, RAPID_API_HEADERS)
-
-    #Build Track objects
-    tracks_no_af = [
-        models.Track(
-            name=item.get('name'),
-            artist=[artist['name'] for artist in item.get('artists', [])],
-            spotify_id=item.get('id')
-        )
-        for item in items
-    ]
+    for item in items:
+        
+        track_name = item.get('name')
+        track_artits = [artist['name'] for artist in item.get('artists', [])]
+        track_spotify_id = item.get('id')
+        
+        track = models.Track(name=track_name,
+                             artist=track_artits,
+                             spotify_id=track_spotify_id)
+        
+        tracks_no_af.append(track)
     
+    # Get all get_audio_feature coroutines for all tracks
     tasks = []
-    for track in tracks_no_af:
-        task = limited_get_audio_features(track)
+    
+    for i, track in enumerate(tracks_no_af):
+        task = get_task_delayed(track, i * 0.15)
         tasks.append(task)
 
-    #Run all tasks concurrently with limit
+    # Run all tasks concurrently with limit
     tracks_ready = await asyncio.gather(*tasks)
 
-    #Filter out any None results
+    # ilter out any None results
     tracks = []
     for track in tracks_ready:
         if track is not None:
-             tracks.append(track)
+            tracks.append(track)
 
-    #Process and visualize
+    # Process and visualize
     processed_tracks = math_utils.pipline(tracks)
     plot_utils.visualize_projected_tracks(processed_tracks)
 
