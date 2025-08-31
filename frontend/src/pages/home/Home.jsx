@@ -1,13 +1,20 @@
 import { loginSpotify } from "../../api/nebula";
+import styles from './Home.module.css';
+import spotifyLogo from "../../assets/spotify-logo.png";
+import nebulaBackground from "../../assets/b5.jpg";
 
 function Home() {
     return (
-        <div style={{ padding: "50px", textAlign: "center" }}>
-            <h1>Welcome to Nebula</h1>
-            <p>Connect your Spotify account to generate your nebula.</p>
-            <button onClick={loginSpotify} style={{ padding: "10px 20px", marginTop: "20px" }}>
-                Login with Spotify
+        <div className={styles.container} style={{ backgroundImage: `url(${nebulaBackground})` }}>
+
+            <h1 className={styles.title}>Welcome to Nebula</h1>
+
+
+            <button className={styles.button} onClick={loginSpotify}>
+                <img src={spotifyLogo} className={styles.spotifyLogo}/>
+                <span>Continue with Spotify</span>
             </button>
+
         </div>
     );
 }
