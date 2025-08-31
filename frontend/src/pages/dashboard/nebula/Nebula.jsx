@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Instances, Instance } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Html } from "@react-three/drei";
 import { EffectComposer, Bloom, Noise, Vignette } from "@react-three/postprocessing";
@@ -17,36 +18,42 @@ Rendering Pipeline:
  5. Post Effects.   <PostFX>
 */
 
-export default function Nebula({data = []}) {
-    // Create boundary limits according to data. Cache using useMemo
-    const bounds = useMemo(() => {
-        if (!data.length) 
-            return { center: new THREE.Vector3(0,0,0), radius: 10 };
+export default function Nebula({ data = [], highlighted, setHighlighted}) {
+  const bounds = useMemo(() => {
+    if (!data.length)
+      return { center: new THREE.Vector3(0, 0, 0), radius: 10 };
 
-        const box = new THREE.Box3();
-        const v = new THREE.Vector3();
-        data.forEach(p => box.expandByPoint(v.set(p.x,p.y,p.z)));
-        const center = new THREE.Vector3();
-        box.getCenter(center);
-        const radius = box.getSize(new THREE.Vector3()).length() * 0.6 + 10;
-        return { center, radius };
-    }, [data]);
+    const box = new THREE.Box3();
+    const v = new THREE.Vector3();
+    data.forEach(p => box.expandByPoint(v.set(p.x, p.y, p.z)));
+    const center = new THREE.Vector3();
+    box.getCenter(center);
+    const radius = box.getSize(new THREE.Vector3()).length() * 0.6 + 10;
+    return { center, radius };
+  }, [data]);
 
-    return(
-        <div className={styles.nebula}>
-            <Canvas dpr={[1,2]} camera={{ position: [0,0,bounds.radius], fov: 60 }}>
-                <color attach="background" args={["gray"]} />
-                <Lights />
-                <group position={[-bounds.center.x,-bounds.center.y,-bounds.center.z]}>
-                      <Trackcloud data={data} />
-                      <Starfield count={1500} />
-                </group>
-                <OrbitControls enableDamping dampingFactor={0.08} zoomSpeed={0.6} rotateSpeed={0.6} />
-                <PostFX />
-            </Canvas>
-        </div>
-    );
+  const handleClick = (point, index) => {
+    setHighlighted(point.cluster)
+    console.log("Clicked point:", point, "at index:", index);
+    // You can also update state here to highlight, open info, etc.
+  };
+  return (
+    <div className={styles.nebula}>
+      <Canvas dpr={[1, 2]} camera={{ position: [0, 0, bounds.radius], fov: 60 }}>
+        <color attach="background" args={["gray"]} />
+        <Lights />
+        <group position={[-bounds.center.x, -bounds.center.y, -bounds.center.z]}>
+          <TrackcloudPoints data={data} highlighted={highlighted} />
+          <TrackcloudInstance data={data}  onPointClick={handleClick} />
+          <Starfield count={1500} />
+        </group>
+        <OrbitControls enableDamping dampingFactor={0.08} zoomSpeed={0.6} rotateSpeed={0.6} />
+        <PostFX />
+      </Canvas>
+    </div>
+  );
 }
+
 
 
 
@@ -122,15 +129,66 @@ function Starfield({count = 1500}) {
 }
 
 
+function TrackcloudInstance({ data, onPointClick }) {
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
-/**
- * 
- * @param {*} data
- * @returns Trackcloud ThreeJS Scene
- */
+  return (
+    <Instances
+      limit={data.length}
+      castShadow={false}
+      receiveShadow={false}
+      geometry={new THREE.SphereGeometry(0.1, 8, 8)}
+      material={
+        new THREE.MeshStandardMaterial({
+          transparent: true,
+          opacity: 0,
+          depthWrite: false,
+        })
+      }
+    >
+      {data.map((p, i) => (
+        <Instance
+          key={i}
+          position={[p.x, p.y, p.z]}
+          scale={1}
+          onClick={(e) => {
+            e.stopPropagation();
+            onPointClick?.(p, i);
+          }}
+          onPointerOver={(e) => {
+            e.stopPropagation();
+            setHoveredIndex(i);
+          }}
+          onPointerOut={(e) => {
+            e.stopPropagation();
+            setHoveredIndex(null);
+          }}
+        >
+          {hoveredIndex === i && (
+            <Html
+                position={[0, 0.02, 0]}
+                style={{
+                    fontFamily: "Arial",
+                    fontSize: "60px",
+                    background: "transparent",
+                    pointerEvents: "none",
+                    whiteSpace: "nowrap",
+                }}
+                center
+                distanceFactor={1}
+                >
+                {p.name}<br />by {p.artist}
+            </Html>
+          )}
+        </Instance>
+      ))}
+    </Instances>
+  );
+}
 
-function Trackcloud({ data }) {
-    const { positions, colors, count } = useNebulaAttributes(data);
+
+function TrackcloudPoints({ data, highlighted}) {
+  const { positions, colors, count } = useNebulaAttributes(data, highlighted);
     if (count === 0) return null;
     const pointsRef = useRef();
     // Slice the positions to create a snapshot to animate
@@ -145,7 +203,7 @@ function Trackcloud({ data }) {
     g.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     g.setAttribute("color", new THREE.BufferAttribute(colors, 3));
     return g;
-    }, [positions, colors]);
+    }, [positions, colors, highlighted]);
 
     return (
     <points ref={pointsRef} geometry={geometry}>
@@ -160,7 +218,9 @@ function Trackcloud({ data }) {
         />
     </points>
   );
-}
+};
+
+
 
 /**
  * 
@@ -170,7 +230,7 @@ function Trackcloud({ data }) {
  * @description animates the Trackcloud nebula
  */
 
-function useNebulaDrift(pointsRef, basePositions, speed = 1) {
+function useNebulaDrift(pointsRef, basePositions, speed = 0.1) {
   const t0 = useRef(Math.random() * 1000);
   useFrame(({ clock }) => {
     const points = pointsRef.current;
@@ -194,7 +254,7 @@ function useNebulaDrift(pointsRef, basePositions, speed = 1) {
  * @returns {Array} of colors depending on cluster
  * @returns {Int} count of tracks
  */
-function useNebulaAttributes(data) {
+function useNebulaAttributes(data, highlighted) {
   return useMemo(() => {
     const n = data.length;
     const positions = new Float32Array(n * 3);
@@ -206,17 +266,24 @@ function useNebulaAttributes(data) {
       positions[i * 3 + 1] = p.y;
       positions[i * 3 + 2] = p.z;
       // Color by cluster if available, fallback to hash of name
-      const hue = typeof p.cluster === "number" ? (p.cluster % 10) / 10 : Math.random();
-      const sat = 0.6;
-      const light = 0.5;
-      color.setHSL(hue, sat, light);
+      
+      if (p.cluster === highlighted) {
+        color.setHSL(0, 0, 1);
+        
+      }  else {
+        const hue = typeof p.cluster === "number" ? (p.cluster % 10) / 10 : Math.random();
+        const sat = 0.6;
+        const light = 0.5;
+        color.setHSL(hue, sat, light);
+      } 
+      
       colors[i * 3] = color.r;
       colors[i * 3 + 1] = color.g;
       colors[i * 3 + 2] = color.b;
     });
 
     return { positions, colors, count: n };
-  }, [data]);
+    }, [data, highlighted]);
 }
 
 function createCircleTexture(color = '#ffffff', size = 128) {
@@ -237,3 +304,4 @@ function createCircleTexture(color = '#ffffff', size = 128) {
   texture.needsUpdate = true;
   return texture;
 }
+
