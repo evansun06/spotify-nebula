@@ -40,9 +40,6 @@ ALGORITHM = 'HS256'
 RAPID_API_KEY = os.getenv('RAPID_API_KEY')
 RAPID_API_HEADERS = {'x-rapidapi-host': 'track-analysis.p.rapidapi.com', 'x-rapidapi-key': RAPID_API_KEY}
 
-MAX_CONCURRENT = 10
-MAX_PER_SEC = 8
-
 '''API Router, HTTP Bearer and Async Limiter'''
 router = APIRouter(tags={'spotify'})
 security = HTTPBearer()
@@ -133,7 +130,7 @@ async def get_audio_features(track: models.Track):
     
     try:
         async with httpx.AsyncClient() as client:
-            resp = await client.get(f'https://track-analysis.p.rapidapi.com/pktx/spotify/{track_id}', headers=RAPID_API_HEADERS, timeout=5)
+            resp = await client.get(f'https://track-analysis.p.rapidapi.com/pktx/spotify/{track_id}', headers=RAPID_API_HEADERS, timeout=10)
         
         resp.raise_for_status()
         raw_audio_features = resp.json()
@@ -226,8 +223,9 @@ async def callback(code: str):
         return {'message': f'{e}'} 
     
     token = create_access_token(user.id, user.spotify_user_id, user.display_name, timedelta(minutes=1000))
-
-    return {'access_token': token, 'token_type': 'bearer'}
+    frontend_url = f"http://localhost:5173/callback?token={token}"
+    
+    return RedirectResponse(url=frontend_url)
 
 
 @router.get('/nebula/{term}')
