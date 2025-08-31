@@ -1,11 +1,16 @@
 import { fetchNebula } from "../../api/nebula";
 import Nebula from './nebula/Nebula';
+import ControlPanel from './controlpanel/ControPanel';
+
 import { useEffect, useState } from 'react';
 
 function Dashboard() {
-    const [data, setData] = useState([]);
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    const [data, setData] = useState([]);
+    const [highlighted, setHighlighted] = useState(null); // lifted state
 
     const handleGetNebula = async () => {
         setLoading(true);
@@ -50,7 +55,9 @@ function Dashboard() {
                     </div>
                 )}
             </div>
-            {data.length > 0 && <Nebula data={data} />}
+            {data.length > 0 && <Nebula data={data} highlighted={highlighted} setHighlighted={setHighlighted} />}
+            {data.length > 0 && <ControlPanel data={data} highlighted={highlighted} setHighlighted={setHighlighted} />}
+                 
 
         </>
     );
