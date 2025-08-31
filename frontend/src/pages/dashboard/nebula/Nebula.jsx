@@ -35,11 +35,11 @@ export default function Nebula({data = []}) {
     return(
         <div className={styles.nebula}>
             <Canvas dpr={[1,2]} camera={{ position: [0,0,bounds.radius], fov: 60 }}>
-                <color attach="background" args={["#02010a"]} />
+                <color attach="background" args={["gray"]} />
                 <Lights />
-                <Starfield count={1500} />
                 <group position={[-bounds.center.x,-bounds.center.y,-bounds.center.z]}>
                       <Trackcloud data={data} />
+                      <Starfield count={1500} />
                 </group>
                 <OrbitControls enableDamping dampingFactor={0.08} zoomSpeed={0.6} rotateSpeed={0.6} />
                 <PostFX />
@@ -47,6 +47,8 @@ export default function Nebula({data = []}) {
         </div>
     );
 }
+
+
 
 /* Ambient light, plus two directional light assets */
 function Lights() {
@@ -91,43 +93,34 @@ function PostFX() {
 /*
  * Returns a background starfield element
  */
-function Starfield({ count = 1500 }) {
+function Starfield({count = 1500}) {
   const ref = useRef();
 
   // Generate random spherical distribution of points
   const positions = useMemo(() => {
-    const arr = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const r = 150 * Math.cbrt(Math.random()); // Increased radius for visibility
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      arr[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      arr[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-      arr[i * 3 + 2] = r * Math.cos(phi);
-    }
-    return arr;
-  }, [count]);
+  const arr = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    arr[i * 3]     = (Math.random() - 0.5) * 800;
+    arr[i * 3 + 1] = (Math.random() - 0.5) * 800;
+    arr[i * 3 + 2] = (Math.random() - 0.5) * 800;
+  }
+  return arr;
+}, [count]);
 
   return (
     <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          array={positions}
-          itemSize={3}
-        />
-      </bufferGeometry>
       <pointsMaterial
-        size={1}
+        size={10}
         sizeAttenuation
         transparent
         opacity={1}
 
-        color="#ffffff"
+        color="black"
       />
     </points>
   );
 }
+
 
 
 /**
