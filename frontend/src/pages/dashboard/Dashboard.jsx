@@ -1,11 +1,13 @@
-import { useState } from "react";
 import { fetchNebula } from "../../api/nebula";
+import Nebula from './nebula/Nebula';
+import { useEffect, useState } from 'react';
+import styles from './NebulaDashboard.module.css'
 
-function Dashboard() {
+export default function nebulaDashboard() {
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [tracks, setTracks] = useState([]);
     const [error, setError] = useState(null);
-
+  
     const handleGetNebula = async () => {
         setLoading(true);
         setError(null);
@@ -14,7 +16,7 @@ function Dashboard() {
             // Example: term could be 'short_term', 'medium_term', 'long_term'
             const data = await fetchNebula("short_term");
             console.log("Nebula data:", data);
-            setTracks(data);
+            setData(data);
         } catch (err) {
             console.error(err);
             setError("Failed to fetch nebula data");
@@ -23,8 +25,9 @@ function Dashboard() {
         }
     };
 
-    return (
-        <div style={{ padding: "50px", textAlign: "center" }}>
+    return(
+        <>
+            <div style={{ padding: "50px", textAlign: "center" }}>
             <h1>Your Dashboard</h1>
             <button
                 onClick={handleGetNebula}
@@ -48,8 +51,10 @@ function Dashboard() {
                     </ul>
                 </div>
             )}
-        </div>
+            </div>
+            <Nebula data={data}/>
+        </>
     );
 }
 
-export default Dashboard;
+

@@ -1,0 +1,1009 @@
+[
+  {
+    "name": "From The Start",
+    "cluster": 2,
+    "artist": [
+      "Laufey"
+    ],
+    "x": 6.315718650817871,
+    "y": 5.389232158660889,
+    "z": 1.5310158729553223
+  },
+  {
+    "name": "Eyes Without A Face",
+    "cluster": 3,
+    "artist": [
+      "Billy Idol"
+    ],
+    "x": 7.954625606536865,
+    "y": 8.735176086425781,
+    "z": 1.0538758039474487
+  },
+  {
+    "name": "Blue Hair",
+    "cluster": -1,
+    "artist": [
+      "TV Girl"
+    ],
+    "x": 6.74549674987793,
+    "y": 7.212714672088623,
+    "z": 1.7130935192108154
+  },
+  {
+    "name": "Resonance - Super slowed + reverb",
+    "cluster": 1,
+    "artist": [
+      "ajaxecho"
+    ],
+    "x": 5.479642391204834,
+    "y": 7.688560485839844,
+    "z": 4.61757755279541
+  },
+  {
+    "name": "I'll Make a Man Out of You",
+    "cluster": 2,
+    "artist": [
+      "Donny Osmond",
+      "Chorus - Mulan",
+      "Disney"
+    ],
+    "x": 5.689417362213135,
+    "y": 6.248974800109863,
+    "z": 1.3409883975982666
+  },
+  {
+    "name": "Her",
+    "cluster": 3,
+    "artist": [
+      "The American Dawn"
+    ],
+    "x": 7.030956745147705,
+    "y": 7.9161787033081055,
+    "z": 0.807562530040741
+  },
+  {
+    "name": "Jacob and the Stone",
+    "cluster": 1,
+    "artist": [
+      "Emile Mosseri"
+    ],
+    "x": 4.909308910369873,
+    "y": 7.653748989105225,
+    "z": 4.526302814483643
+  },
+  {
+    "name": "Telephones",
+    "cluster": 3,
+    "artist": [
+      "Vacations"
+    ],
+    "x": 7.914308071136475,
+    "y": 8.142391204833984,
+    "z": 0.6081373691558838
+  },
+  {
+    "name": "Feather (feat. Cise Starr & Akin from CYNE)",
+    "cluster": -1,
+    "artist": [
+      "Nujabes",
+      "Cise Starr & Akin from CYNE"
+    ],
+    "x": 6.779368877410889,
+    "y": 7.379004001617432,
+    "z": 2.7124459743499756
+  },
+  {
+    "name": "Timeless (feat. Playboi Carti)",
+    "cluster": 3,
+    "artist": [
+      "The Weeknd",
+      "Playboi Carti"
+    ],
+    "x": 6.859118938446045,
+    "y": 8.211155891418457,
+    "z": 1.3340559005737305
+  },
+  {
+    "name": "Someone In The Crowd",
+    "cluster": 0,
+    "artist": [
+      "Emma Stone",
+      "Callie Hernandez",
+      "Sonoya Mizuno",
+      "Jessica Rothe"
+    ],
+    "x": 8.253283500671387,
+    "y": 7.831516265869141,
+    "z": 2.5379631519317627
+  },
+  {
+    "name": "Cudi Zone",
+    "cluster": -1,
+    "artist": [
+      "Kid Cudi"
+    ],
+    "x": 6.683722496032715,
+    "y": 6.953246593475342,
+    "z": 1.94849693775177
+  },
+  {
+    "name": "Alive!",
+    "cluster": -1,
+    "artist": [
+      "Bakar"
+    ],
+    "x": 7.124416351318359,
+    "y": 6.870635032653809,
+    "z": 1.3512849807739258
+  },
+  {
+    "name": "New Home",
+    "cluster": 1,
+    "artist": [
+      "Austin Farwell"
+    ],
+    "x": 4.765221118927002,
+    "y": 7.5483174324035645,
+    "z": 4.562646389007568
+  },
+  {
+    "name": "Passionfruit",
+    "cluster": -1,
+    "artist": [
+      "Drake"
+    ],
+    "x": 6.125763893127441,
+    "y": 6.856818199157715,
+    "z": 1.0716735124588013
+  },
+  {
+    "name": "TELEKINESIS (feat. SZA & Future)",
+    "cluster": -1,
+    "artist": [
+      "Travis Scott",
+      "SZA",
+      "Future"
+    ],
+    "x": 7.195352077484131,
+    "y": 5.585474014282227,
+    "z": 1.5524415969848633
+  },
+  {
+    "name": "Tried Our Best",
+    "cluster": 2,
+    "artist": [
+      "Drake"
+    ],
+    "x": 5.845611095428467,
+    "y": 5.058945655822754,
+    "z": 1.9532625675201416
+  },
+  {
+    "name": "Enter Galactic (Love Connection Part I)",
+    "cluster": 3,
+    "artist": [
+      "Kid Cudi"
+    ],
+    "x": 6.740620136260986,
+    "y": 8.34282112121582,
+    "z": 1.5235620737075806
+  },
+  {
+    "name": "What Once Was",
+    "cluster": 3,
+    "artist": [
+      "Her's"
+    ],
+    "x": 7.59956693649292,
+    "y": 8.971684455871582,
+    "z": 2.3085501194000244
+  },
+  {
+    "name": "I Smoked Away My Brain (I'm God x Demons Mashup) (feat. Imogen Heap & Clams Casino)",
+    "cluster": 3,
+    "artist": [
+      "A$AP Rocky",
+      "Imogen Heap",
+      "Clams Casino"
+    ],
+    "x": 7.307223796844482,
+    "y": 8.785703659057617,
+    "z": 2.6071414947509766
+  },
+  {
+    "name": "Fashion Killa",
+    "cluster": 0,
+    "artist": [
+      "A$AP Rocky"
+    ],
+    "x": 8.411367416381836,
+    "y": 7.65003776550293,
+    "z": 2.696470260620117
+  },
+  {
+    "name": "She Needs Him",
+    "cluster": 1,
+    "artist": [
+      "Her's"
+    ],
+    "x": 6.644464015960693,
+    "y": 8.414188385009766,
+    "z": 3.5643298625946045
+  },
+  {
+    "name": "End of Beginning",
+    "cluster": -1,
+    "artist": [
+      "Djo"
+    ],
+    "x": 6.879083156585693,
+    "y": 8.0355806350708,
+    "z": 2.506676197052002
+  },
+  {
+    "name": "Glue Song",
+    "cluster": 2,
+    "artist": [
+      "beabadoobee"
+    ],
+    "x": 6.251273155212402,
+    "y": 5.733139991760254,
+    "z": 1.9273453950881958
+  },
+  {
+    "name": "I Wonder",
+    "cluster": -1,
+    "artist": [
+      "Kanye West"
+    ],
+    "x": 7.0172224044799805,
+    "y": 7.974133014678955,
+    "z": 2.9132823944091797
+  },
+  {
+    "name": "A Town with an Ocean View",
+    "cluster": 2,
+    "artist": [
+      "Joe Hisaishi"
+    ],
+    "x": 5.657048225402832,
+    "y": 5.649806499481201,
+    "z": 1.6739065647125244
+  },
+  {
+    "name": "This Charming Man - 2011 Remaster",
+    "cluster": 3,
+    "artist": [
+      "The Smiths"
+    ],
+    "x": 7.612570285797119,
+    "y": 8.866044998168945,
+    "z": 1.303884744644165
+  },
+  {
+    "name": "I'm Done",
+    "cluster": -1,
+    "artist": [
+      "Bakar"
+    ],
+    "x": 7.21771764755249,
+    "y": 7.192140579223633,
+    "z": 1.3490726947784424
+  },
+  {
+    "name": "Rather Be (feat. Jess Glynne)",
+    "cluster": 3,
+    "artist": [
+      "Clean Bandit",
+      "Jess Glynne"
+    ],
+    "x": 6.580061435699463,
+    "y": 7.732430458068848,
+    "z": 1.2612015008926392
+  },
+  {
+    "name": "Another Day Of Sun",
+    "cluster": 3,
+    "artist": [
+      "La La Land Cast"
+    ],
+    "x": 7.2228851318359375,
+    "y": 8.897945404052734,
+    "z": 1.9361456632614136
+  },
+  {
+    "name": "drive ME crazy!",
+    "cluster": 3,
+    "artist": [
+      "Lil Yachty",
+      "Diana Gordon"
+    ],
+    "x": 8.158865928649902,
+    "y": 8.80722713470459,
+    "z": 1.4998881816864014
+  },
+  {
+    "name": "Dreams, Fairytales, Fantasies (feat. Brent Faiyaz & Salaam Remi)",
+    "cluster": -1,
+    "artist": [
+      "A$AP Ferg",
+      "Brent Faiyaz",
+      "Salaam Remi"
+    ],
+    "x": 7.90925407409668,
+    "y": 7.514869689941406,
+    "z": 1.6909880638122559
+  },
+  {
+    "name": "Every Breath You Take",
+    "cluster": 2,
+    "artist": [
+      "The Police"
+    ],
+    "x": 6.217121124267578,
+    "y": 6.468269348144531,
+    "z": 1.2787185907363892
+  },
+  {
+    "name": "All The Stars (with SZA) - From \"Black Panther: The Album\"",
+    "cluster": 3,
+    "artist": [
+      "Kendrick Lamar",
+      "SZA"
+    ],
+    "x": 7.441744804382324,
+    "y": 7.92958402633667,
+    "z": 1.0050538778305054
+  },
+  {
+    "name": "The Rain Formerly Known as Purple",
+    "cluster": 1,
+    "artist": [
+      "Chris Christodoulou"
+    ],
+    "x": 5.931047439575195,
+    "y": 8.21169376373291,
+    "z": 4.202062129974365
+  },
+  {
+    "name": "On Track",
+    "cluster": 3,
+    "artist": [
+      "Tame Impala"
+    ],
+    "x": 7.28651762008667,
+    "y": 8.601250648498535,
+    "z": 2.8401942253112793
+  },
+  {
+    "name": "Watch This - ARIZONATEARS Pluggnb Remix",
+    "cluster": 3,
+    "artist": [
+      "Lil Uzi Vert",
+      "sped up nightcore",
+      "ARIZONATEARS"
+    ],
+    "x": 6.759235382080078,
+    "y": 9.052335739135742,
+    "z": 1.654502272605896
+  },
+  {
+    "name": "Dark Thoughts",
+    "cluster": 0,
+    "artist": [
+      "Lil Tecca"
+    ],
+    "x": 8.27139949798584,
+    "y": 7.52422571182251,
+    "z": 2.361682415008545
+  },
+  {
+    "name": "Come On Eileen",
+    "cluster": -1,
+    "artist": [
+      "Dexys Midnight Runners"
+    ],
+    "x": 7.091253757476807,
+    "y": 5.580469608306885,
+    "z": 1.625569462776184
+  },
+  {
+    "name": "Back On 74",
+    "cluster": 0,
+    "artist": [
+      "Jungle"
+    ],
+    "x": 8.369946479797363,
+    "y": 7.715545177459717,
+    "z": 2.698561191558838
+  },
+  {
+    "name": "Panda Po",
+    "cluster": 1,
+    "artist": [
+      "Hans Zimmer",
+      "John Powell"
+    ],
+    "x": 5.829812049865723,
+    "y": 7.6401495933532715,
+    "z": 4.471949100494385
+  },
+  {
+    "name": "Luv(sic.) pt3 (feat. Shing02)",
+    "cluster": -1,
+    "artist": [
+      "Nujabes",
+      "Shing02"
+    ],
+    "x": 6.925148963928223,
+    "y": 6.528228759765625,
+    "z": 1.345625400543213
+  },
+  {
+    "name": "Lovers Rock",
+    "cluster": 3,
+    "artist": [
+      "TV Girl"
+    ],
+    "x": 7.861609935760498,
+    "y": 8.977126121520996,
+    "z": 1.445403814315796
+  },
+  {
+    "name": "Wind Song",
+    "cluster": 1,
+    "artist": [
+      "Emile Mosseri",
+      "Han Ye-ri"
+    ],
+    "x": 5.26486873626709,
+    "y": 7.813799858093262,
+    "z": 4.458139419555664
+  },
+  {
+    "name": "In The Mix - Fast Eddie Mix",
+    "cluster": 1,
+    "artist": [
+      "Mixmasters",
+      "Mc Action",
+      "Fast Eddie"
+    ],
+    "x": 5.850600719451904,
+    "y": 8.176732063293457,
+    "z": 3.5712223052978516
+  },
+  {
+    "name": "Never Die (feat. Lil Wayne)",
+    "cluster": 0,
+    "artist": [
+      "Nas",
+      "Lil Wayne"
+    ],
+    "x": 8.597671508789062,
+    "y": 7.585654258728027,
+    "z": 2.307427406311035
+  },
+  {
+    "name": "Southern Nights",
+    "cluster": 3,
+    "artist": [
+      "Glen Campbell"
+    ],
+    "x": 7.219452381134033,
+    "y": 8.63216781616211,
+    "z": 1.1520715951919556
+  },
+  {
+    "name": "Suis-moi - French Version",
+    "cluster": 2,
+    "artist": [
+      "Hans Zimmer",
+      "Camille"
+    ],
+    "x": 5.589667797088623,
+    "y": 5.355951309204102,
+    "z": 1.9270594120025635
+  },
+  {
+    "name": "Dreamer",
+    "cluster": 2,
+    "artist": [
+      "Laufey"
+    ],
+    "x": 5.99514627456665,
+    "y": 5.44334077835083,
+    "z": 2.15486478805542
+  },
+  {
+    "name": "Save It For Later",
+    "cluster": 3,
+    "artist": [
+      "The English Beat"
+    ],
+    "x": 7.00250244140625,
+    "y": 8.966626167297363,
+    "z": 2.2579963207244873
+  },
+  {
+    "name": "Serotonin Moonbeams",
+    "cluster": 3,
+    "artist": [
+      "The Blessed Madonna",
+      "Uffie"
+    ],
+    "x": 6.573413848876953,
+    "y": 8.76213550567627,
+    "z": 1.552059531211853
+  },
+  {
+    "name": "Mushaboom",
+    "cluster": 2,
+    "artist": [
+      "Feist"
+    ],
+    "x": 6.365496635437012,
+    "y": 7.0367021560668945,
+    "z": 0.8332206606864929
+  },
+  {
+    "name": "Turnaround Reprise",
+    "cluster": 2,
+    "artist": [
+      "Hans Zimmer",
+      "Camille"
+    ],
+    "x": 5.448732376098633,
+    "y": 5.2462873458862305,
+    "z": 2.192960739135742
+  },
+  {
+    "name": "Dramamine",
+    "cluster": 1,
+    "artist": [
+      "Flawed Mangoes"
+    ],
+    "x": 5.243222713470459,
+    "y": 7.473222255706787,
+    "z": 4.537065029144287
+  },
+  {
+    "name": "Perfect Day",
+    "cluster": 2,
+    "artist": [
+      "Lou Reed"
+    ],
+    "x": 6.141358852386475,
+    "y": 5.835773944854736,
+    "z": 2.430589437484741
+  },
+  {
+    "name": "golden hour",
+    "cluster": 2,
+    "artist": [
+      "JVKE"
+    ],
+    "x": 6.929747104644775,
+    "y": 5.585204601287842,
+    "z": 1.5029008388519287
+  },
+  {
+    "name": "Put Your Records On",
+    "cluster": 3,
+    "artist": [
+      "Corinne Bailey Rae"
+    ],
+    "x": 6.649476051330566,
+    "y": 7.314112663269043,
+    "z": 0.7017884254455566
+  },
+  {
+    "name": "Evergreen",
+    "cluster": 2,
+    "artist": [
+      "Richy Mitch & The Coal Miners"
+    ],
+    "x": 5.706688404083252,
+    "y": 5.229212760925293,
+    "z": 1.7814829349517822
+  },
+  {
+    "name": "Counting Stars",
+    "cluster": 1,
+    "artist": [
+      "Nujabes"
+    ],
+    "x": 5.440552711486816,
+    "y": 7.765423774719238,
+    "z": 4.1382856369018555
+  },
+  {
+    "name": "With You",
+    "cluster": 0,
+    "artist": [
+      "Drake",
+      "PARTYNEXTDOOR"
+    ],
+    "x": 8.727054595947266,
+    "y": 7.52927827835083,
+    "z": 2.2797155380249023
+  },
+  {
+    "name": "Whirling-In-Rags, 8 AM",
+    "cluster": 1,
+    "artist": [
+      "Sea Power"
+    ],
+    "x": 5.668406009674072,
+    "y": 8.109664916992188,
+    "z": 4.175692558288574
+  },
+  {
+    "name": "End of Line",
+    "cluster": 1,
+    "artist": [
+      "Daft Punk"
+    ],
+    "x": 6.493628978729248,
+    "y": 7.992392539978027,
+    "z": 4.194727897644043
+  },
+  {
+    "name": "Another Day in Paradise - 2016 Remaster",
+    "cluster": 2,
+    "artist": [
+      "Phil Collins"
+    ],
+    "x": 6.633965969085693,
+    "y": 6.179863929748535,
+    "z": 1.3509105443954468
+  },
+  {
+    "name": "Kiss of Life",
+    "cluster": 2,
+    "artist": [
+      "Sade"
+    ],
+    "x": 6.183926582336426,
+    "y": 5.870289325714111,
+    "z": 1.2804853916168213
+  },
+  {
+    "name": "Nun id change",
+    "cluster": 1,
+    "artist": [
+      "Yeat"
+    ],
+    "x": 5.718920707702637,
+    "y": 8.064077377319336,
+    "z": 3.456305742263794
+  },
+  {
+    "name": "Tip Toe",
+    "cluster": -1,
+    "artist": [
+      "HYBS"
+    ],
+    "x": 6.479803562164307,
+    "y": 6.923718452453613,
+    "z": 2.4257612228393555
+  },
+  {
+    "name": "Stop This Train",
+    "cluster": 2,
+    "artist": [
+      "John Mayer"
+    ],
+    "x": 5.854129314422607,
+    "y": 5.644497394561768,
+    "z": 1.4298580884933472
+  },
+  {
+    "name": "Apple Pie",
+    "cluster": -1,
+    "artist": [
+      "Travis Scott"
+    ],
+    "x": 6.778197765350342,
+    "y": 8.107159614562988,
+    "z": 2.0723183155059814
+  },
+  {
+    "name": "Nightcall",
+    "cluster": 3,
+    "artist": [
+      "Kavinsky"
+    ],
+    "x": 8.091415405273438,
+    "y": 8.960443496704102,
+    "z": 1.34824538230896
+  },
+  {
+    "name": "Ron Artest",
+    "cluster": 0,
+    "artist": [
+      "Babyface Ray",
+      "42 Dugg"
+    ],
+    "x": 8.625951766967773,
+    "y": 7.660341262817383,
+    "z": 2.319575071334839
+  },
+  {
+    "name": "In The Navy",
+    "cluster": 3,
+    "artist": [
+      "Village People"
+    ],
+    "x": 6.637319087982178,
+    "y": 9.025485038757324,
+    "z": 1.715085506439209
+  },
+  {
+    "name": "Pope Is a Rockstar",
+    "cluster": 2,
+    "artist": [
+      "SALES"
+    ],
+    "x": 6.32330322265625,
+    "y": 5.688353538513184,
+    "z": 1.496624231338501
+  },
+  {
+    "name": "Right Down the Line",
+    "cluster": -1,
+    "artist": [
+      "Gerry Rafferty"
+    ],
+    "x": 5.841207027435303,
+    "y": 6.430126190185547,
+    "z": 1.2870663404464722
+  },
+  {
+    "name": "Cherry-coloured Funk",
+    "cluster": 3,
+    "artist": [
+      "Cocteau Twins"
+    ],
+    "x": 8.007499694824219,
+    "y": 8.408882141113281,
+    "z": 0.7893637418746948
+  },
+  {
+    "name": "Xtal",
+    "cluster": 1,
+    "artist": [
+      "Aphex Twin"
+    ],
+    "x": 5.607272148132324,
+    "y": 7.971978187561035,
+    "z": 4.361178874969482
+  },
+  {
+    "name": "welcome and goodbye",
+    "cluster": 1,
+    "artist": [
+      "Dream, Ivory"
+    ],
+    "x": 6.2863569259643555,
+    "y": 8.441256523132324,
+    "z": 3.7433557510375977
+  },
+  {
+    "name": "The Spins",
+    "cluster": 3,
+    "artist": [
+      "Mac Miller",
+      "Empire Of The Sun"
+    ],
+    "x": 6.574731826782227,
+    "y": 8.361734390258789,
+    "z": 1.2583439350128174
+  },
+  {
+    "name": "90210 (feat. Kacy Hill)",
+    "cluster": 3,
+    "artist": [
+      "Travis Scott",
+      "Kacy Hill"
+    ],
+    "x": 8.066884994506836,
+    "y": 8.240113258361816,
+    "z": 0.6391187310218811
+  },
+  {
+    "name": "OH! TENGO SUERTE",
+    "cluster": -1,
+    "artist": [
+      "Masayoshi Takanaka"
+    ],
+    "x": 7.1407294273376465,
+    "y": 5.6731109619140625,
+    "z": 1.692725658416748
+  },
+  {
+    "name": "NIGHTS LIKE THIS",
+    "cluster": 3,
+    "artist": [
+      "The Kid LAROI"
+    ],
+    "x": 7.462992191314697,
+    "y": 8.876143455505371,
+    "z": 2.5855135917663574
+  },
+  {
+    "name": "Present",
+    "cluster": 1,
+    "artist": [
+      "Lloyd Vaan"
+    ],
+    "x": 4.683015823364258,
+    "y": 7.410294532775879,
+    "z": 4.6820526123046875
+  },
+  {
+    "name": "Out of Time",
+    "cluster": 3,
+    "artist": [
+      "The Weeknd"
+    ],
+    "x": 7.746996879577637,
+    "y": 8.108793258666992,
+    "z": 1.1080102920532227
+  },
+  {
+    "name": "The Boy with the Thorn in His Side - 2011 Remaster",
+    "cluster": 3,
+    "artist": [
+      "The Smiths"
+    ],
+    "x": 7.775190830230713,
+    "y": 9.074296951293945,
+    "z": 1.7765864133834839
+  },
+  {
+    "name": "the way things go",
+    "cluster": 2,
+    "artist": [
+      "beabadoobee"
+    ],
+    "x": 6.476358413696289,
+    "y": 5.827481746673584,
+    "z": 2.1845192909240723
+  },
+  {
+    "name": "ICARUS",
+    "cluster": 1,
+    "artist": [
+      "Tony Ann"
+    ],
+    "x": 5.101612091064453,
+    "y": 7.445779323577881,
+    "z": 4.628965854644775
+  },
+  {
+    "name": "Rude Boy",
+    "cluster": 0,
+    "artist": [
+      "Rihanna"
+    ],
+    "x": 7.944393157958984,
+    "y": 7.987463474273682,
+    "z": 2.781564950942993
+  },
+  {
+    "name": "Boy's a liar Pt. 2",
+    "cluster": 3,
+    "artist": [
+      "PinkPantheress",
+      "Ice Spice"
+    ],
+    "x": 6.74543571472168,
+    "y": 8.781067848205566,
+    "z": 1.82896888256073
+  },
+  {
+    "name": "Too Many Nights (feat. Don Toliver & with Future)",
+    "cluster": 3,
+    "artist": [
+      "Metro Boomin",
+      "Future",
+      "Don Toliver"
+    ],
+    "x": 8.033944129943848,
+    "y": 8.2310209274292,
+    "z": 1.1048613786697388
+  },
+  {
+    "name": "Limerence",
+    "cluster": -1,
+    "artist": [
+      "Yves Tumor"
+    ],
+    "x": 6.070896625518799,
+    "y": 6.013133525848389,
+    "z": 2.7662177085876465
+  },
+  {
+    "name": "ELECTRIFY TONIGHT",
+    "cluster": 3,
+    "artist": [
+      "Tommy Richman"
+    ],
+    "x": 6.62539529800415,
+    "y": 7.36559534072876,
+    "z": 0.9173133373260498
+  },
+  {
+    "name": "QKThr",
+    "cluster": 1,
+    "artist": [
+      "Aphex Twin"
+    ],
+    "x": 4.670925617218018,
+    "y": 7.288874626159668,
+    "z": 4.764145851135254
+  },
+  {
+    "name": "DIE TRYING",
+    "cluster": 3,
+    "artist": [
+      "PARTYNEXTDOOR",
+      "Drake",
+      "Yebba"
+    ],
+    "x": 6.784307956695557,
+    "y": 7.657977104187012,
+    "z": 0.8624182939529419
+  },
+  {
+    "name": "Ladyfingers",
+    "cluster": 1,
+    "artist": [
+      "Herb Alpert & The Tijuana Brass"
+    ],
+    "x": 5.042778491973877,
+    "y": 7.874098777770996,
+    "z": 4.43784236907959
+  },
+  {
+    "name": "Rock",
+    "cluster": 0,
+    "artist": [
+      "Stepz"
+    ],
+    "x": 8.60222053527832,
+    "y": 7.51336669921875,
+    "z": 2.6229841709136963
+  },
+  {
+    "name": "Time Moves Slow",
+    "cluster": -1,
+    "artist": [
+      "BADBADNOTGOOD",
+      "Samuel T. Herring"
+    ],
+    "x": 6.108127117156982,
+    "y": 6.19890832901001,
+    "z": 2.283310651779175
+  },
+  {
+    "name": "sincerely",
+    "cluster": 1,
+    "artist": [
+      "TSUTCHIE"
+    ],
+    "x": 6.2928853034973145,
+    "y": 8.274662017822266,
+    "z": 4.185262680053711
+  },
+  {
+    "name": "Can You Hear The Music",
+    "cluster": 1,
+    "artist": [
+      "Ludwig Göransson"
+    ],
+    "x": 6.034947872161865,
+    "y": 8.07189655303955,
+    "z": 4.459031105041504
+  }
+]
