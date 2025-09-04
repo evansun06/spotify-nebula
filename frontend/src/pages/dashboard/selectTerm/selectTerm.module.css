@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Poppins:wght@400;600&display=swap');
+
+/* Whole Page */
+.selectTermPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #0b003a, #000000 90%);
+    font-family: 'Poppins', sans-serif;
+    color: white;
+    text-align: center;
+    padding: 2rem;
+     background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+/* Intro Text */
+.selectTermText {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+/* Term Buttons */
+.selectTermButtons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 4rem;
+}
+
+.selectTermButton {
+    padding: 20px 25px;
+    cursor: pointer;
+    border: none;
+    border-radius: 100px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    font-size: 1rem;
+    color: white;
+    width: 250px;
+    background: linear-gradient(145deg, #2d0b84, #1a005c);
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.selectTermButton:hover {
+    background: linear-gradient(145deg, #4c1bb0, #2d0b84);
+}
+
+.selected {
+    background: linear-gradient(145deg, #5c2dff, #3a0ca3);
+}
+
+/* Generate Button */
+.generateNebulaButton {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2rem;
+    font-weight: bolder;
+    padding: 75px 150px;
+    border: none;
+    cursor: pointer;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: white;
+    border-radius: 1000px;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.5);
+}
+
+.generateNebulaButton:hover {
+    box-shadow: 0 8px 35px rgba(120, 90, 255, 0.8);
+    filter: brightness(1.15);
+}

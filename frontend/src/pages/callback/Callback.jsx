@@ -11,7 +11,7 @@ function Callback() {
 
         if (token) {
             localStorage.setItem("jwt", token)
-            navigate("/dashboard")
+            navigate("/select-term")
         }
     }, [searchParams, navigate]);
 

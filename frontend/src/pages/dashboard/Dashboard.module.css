@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap');
 
+
 .dash {
   position: relative;
   width: 100%;
@@ -30,6 +31,31 @@
   margin-top: 20px;
 }
 
+.title {
+    font-size: 2rem;
+    color: white;
+    margin-top: 0;
+    padding: 2rem;
+    background-color: rgb(94, 94, 176);
+}
 
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-left: 2rem;
+}
 
+.termSelector {
+    font-size: 1rem;
+    font-weight: bold;
+    padding-right: 2rem;
+}
 
+.rocket {
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+}
