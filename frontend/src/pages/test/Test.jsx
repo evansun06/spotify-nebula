@@ -1,7 +1,7 @@
 
 import Nebula from '../dashboard/nebula/Nebula'
 import ControlPanel from '../dashboard/controlpanel/ControPanel';
-import styles from './Test.module.css'
+import styles from '../dashboard/Dashboard.module.css'
 import { useEffect, useState } from 'react';
 
 function Test() {
@@ -19,10 +19,19 @@ function Test() {
   }, []);
 
   return (
-    <>
-      <Nebula data={data} highlighted={highlighted} setHighlighted={setHighlighted} />
-      <ControlPanel data={data} highlighted={highlighted} setHighlighted={setHighlighted} />
-    </>
+    <div className={styles.dash}>
+                {data.length > 0 && (
+                    <>
+                    <div className={styles.nebula}>
+                        <Nebula data={data} highlighted={highlighted} setHighlighted={setHighlighted} />
+                    </div>
+                    <div className={styles.panelOverlay}>
+                        <ControlPanel data={data} highlighted={highlighted} setHighlighted={setHighlighted} />
+                    </div>
+                    </>
+                )}
+    </div>
+
   );
 }
 

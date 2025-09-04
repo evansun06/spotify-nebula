@@ -43,7 +43,7 @@ RAPID_API_HEADERS = {'x-rapidapi-host': 'track-analysis.p.rapidapi.com', 'x-rapi
 '''API Router, HTTP Bearer and Async Limiter'''
 router = APIRouter(tags={'spotify'})
 security = HTTPBearer()
-limiter = AsyncLimiter(10, 1)
+limiter = AsyncLimiter(5, 1)
 
 
 '''Pydantic Models'''
@@ -285,6 +285,5 @@ async def get_nebula(user: user_dependency, term: str):
 
     # Process and visualize
     processed_tracks = math_utils.pipline(tracks)
-    plot_utils.visualize_projected_tracks(processed_tracks)
 
     return processed_tracks

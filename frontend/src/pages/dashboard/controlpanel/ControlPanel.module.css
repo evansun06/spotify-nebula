@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap');
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  height: 100%;     /* take up parent height */
+  width: 100%;      /* fill the overlay width */
+  box-sizing: border-box;
+  font-family: 'Montserrat';
+}
+
+.songs {
+  flex: 1;               /* fills leftover space inside panel */
+  overflow-y: auto;      /* only this section scrolls */
+  margin-top: 20px;
+}
+
+.song {
+    font-size:10px;
+    font-family: 'Montserrat';
+}
+.select {
+  appearance: none;              /* remove default arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-color: #1db954;     /* Spotify green */
+  color: white;
+  border: none;
+  border-radius: 50px;           /* pill shape */
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  width: 100%;
+  max-width: 200px;             /* prevent stretching */
+}
+
+.select:hover {
+  background-color: #1ed760;     /* lighter green on hover */
+}
+
+.select:active {
+  transform: scale(0.98);        /* subtle press effect */
+}

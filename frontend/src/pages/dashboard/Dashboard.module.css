@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap');
+
+.dash {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* nebula full screen */
+}
+
+.nebula {
+  width: 100%;
+  height: auto;
+}
+
+.panelOverlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px; /* fixed sidebar width */
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.songs {
+  flex: 1;               /* take all available space */
+  overflow-y: auto;       /* make songs scrollable */
+  margin-top: 20px;
+}
+
+
+
+

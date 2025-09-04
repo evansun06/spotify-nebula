@@ -3,7 +3,7 @@ import LoadingBar from 'react-top-loading-bar'
 import { fetchNebula } from "../../api/nebula";
 import ControlPanel from './controlpanel/ControPanel';
 import { useState, useRef} from 'react';
-
+import styles from './Dashboard.module.css'
 
 function Dashboard() {
 
@@ -57,24 +57,26 @@ function Dashboard() {
 
                 {error && <p style={{ color: "red", marginTop: "20px" }}>{error}</p>}
 
-                {data.length > 0 && (
-                    <div style={{ marginTop: "30px" }}>
-                        <h2>Tracks:</h2>
-                        <ul style={{ listStyle: "none", padding: 0 }}>
-                            {data.map((track, idx) => (
-                                <li key={idx}>
-                                    {track.name} by {track.artist.join(", ")}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
             </div>
+            <div className={styles.dash}>
+  {data.length > 0 && (
+    <div className={styles.dash}>
+                    {data.length > 0 && (
+                        <>
+                        <div className={styles.nebula}>
+                            <Nebula data={data} highlighted={highlighted} setHighlighted={setHighlighted} />
+                        </div>
+                        <div className={styles.panelOverlay}>
+                            <ControlPanel data={data} highlighted={highlighted} setHighlighted={setHighlighted} />
+                        </div>
+                        </>
+                    )}
+        </div>
+        )}
+    </div>
+    
 
-
-
-            {data.length > 0 && <Nebula data={data} highlighted={highlighted} setHighlighted={setHighlighted} />}
-            {data.length > 0 && <ControlPanel data={data} highlighted={highlighted} setHighlighted={setHighlighted} />}
+            
                
         </>
     );
