@@ -58,22 +58,21 @@ function Dashboard() {
 
 
 
-            <div className={styles.dash}>
-                {data.length > 0 && (
-                    <div className={styles.dash}>
-                        {data.length > 0 && (
-                            <>
-                                <div className={styles.nebula}>
-                                    <Nebula data={data} highlighted={highlighted} setHighlighted={setHighlighted} />
-                                </div>
-                                <div className={styles.panelOverlay}>
-                                    <ControlPanel data={data} highlighted={highlighted} setHighlighted={setHighlighted} />
-                                </div>
-                            </>
-                        )}
-                    </div>
-                )}
-            </div>
+
+            {data.length > 0 && (
+                <div className={styles.dash}>
+                    {data.length > 0 && (
+                        <>
+                            <div className={styles.nebula}>
+                                <Nebula data={data} highlighted={highlighted} setHighlighted={setHighlighted} />
+                            </div>
+                            <div className={styles.panelOverlay}>
+                                <ControlPanel data={data} highlighted={highlighted} setHighlighted={setHighlighted} />
+                            </div>
+                        </>
+                    )}
+                </div>
+            )}
         </>
     );
 }

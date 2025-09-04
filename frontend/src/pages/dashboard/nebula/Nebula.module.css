@@ -1,8 +1,5 @@
 .nebula {
-  width: 100%;
-  height: 80vh;
+  width: auto;
+  height: 100%;
   background-color: black;
-  overflow: hidden;
-  margin:0px;
-  padding:0px;
 }
