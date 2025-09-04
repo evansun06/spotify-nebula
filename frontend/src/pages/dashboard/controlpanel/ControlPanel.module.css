@@ -8,6 +8,7 @@
   width: 100%;      /* fill the overlay width */
   box-sizing: border-box;
   font-family: 'Montserrat';
+  
 }
 
 .songs {
@@ -25,7 +26,7 @@
   -webkit-appearance: none;
   -moz-appearance: none;
 
-  background-color: #1db954;     /* Spotify green */
+  background-color:rgb(60, 60, 176);     /* Spotify green */
   color: white;
   border: none;
   border-radius: 50px;           /* pill shape */
@@ -41,9 +42,17 @@
 }
 
 .select:hover {
-  background-color: #1ed760;     /* lighter green on hover */
+  background-color:rgb(79, 79, 160) ;     /* lighter green on hover */
 }
 
 .select:active {
   transform: scale(0.98);        /* subtle press effect */
+}
+
+.songs::-webkit-scrollbar {
+  display: none;        /* hide scrollbar in Chrome/Safari */
+}
+.songs {
+  -ms-overflow-style: none;  /* hide scrollbar in IE/Edge */
+  scrollbar-width: none;     /* hide scrollbar in Firefox */
 }
