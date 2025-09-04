@@ -285,6 +285,5 @@ async def get_nebula(user: user_dependency, term: str):
 
     # Process and visualize
     processed_tracks = math_utils.pipline(tracks)
-    plot_utils.visualize_projected_tracks(processed_tracks)
 
     return processed_tracks
