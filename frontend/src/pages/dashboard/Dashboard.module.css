@@ -54,8 +54,9 @@
 
 .rocket {
     display: flex;
+    margin: 0;
+    background-color: black;
     height: 100vh;
     align-items: center;
     justify-content: center;
-    margin: 20px;
 }

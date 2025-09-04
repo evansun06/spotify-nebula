@@ -5,9 +5,8 @@ import ControlPanel from './controlpanel/ControPanel';
 import styles from './Dashboard.module.css'
 import { useState, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import styles from './dashboard.module.css'
 import Lottie from "lottie-react";
-import rocketAnim from "../../assets/rocket.json";
+import rocketAnim from "../../assets/loading-animation.json";
 
 
 function Dashboard() {
@@ -49,7 +48,7 @@ function Dashboard() {
 
     return (
         <>
-            <LoadingBar color="#001076ff" ref={loadingRef} />
+            <LoadingBar color="#bc70ffff" ref={loadingRef} />
 
             {loading && (
                 <div className={styles.rocket}>
