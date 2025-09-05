@@ -10,6 +10,7 @@
 </p>
 
 
+
 <h2>🛠️ Features</h2>
 
 - Implemented relational database support for PostgreSQL/SQLite3 using SQLAlchemy to safely store user authentication tokens, spotify access tokens, and expiry timestamps.
@@ -27,6 +28,19 @@
 - Frameworks/Libraries: FastAPI, ReactJS, SQLAlchemy, Pydantic, Scikit-learn
 - APIs: Spotify Web API, SoundNet Audio Feature API
 
+
+<h2> Demo Screenshots<h2>
+
+![alt text](final.png)
+- Final dashboard built with ThreeJS and React
+
+<h3>Development Screenshots<h3>
+
+![alt text](plotly.png)
+- Initial visualization with Plotly
+
+
+- Link to demo: https://drive.google.com/file/d/11vaPjYpVOHIJO-LCL2yXALcr2TxTJ_oA/view
 <h2>⏰ WIP</h2>
 
 - Optimized clustering algorithim of choice
